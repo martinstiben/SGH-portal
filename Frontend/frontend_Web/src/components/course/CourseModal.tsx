@@ -119,7 +119,7 @@ const CourseModal: React.FC<CourseModalProps> = ({ isOpen, onClose, onSave, cour
               <BookOpen className="w-6 h-6 text-blue-600" />
             </div>
             <div>
-              <h2 id="modal-title" className="text-2xl font-bold text-gray-900">
+              <h2 id="modal-title" className="text-xl font-bold text-gray-900">
                 {course ? 'Editar Curso' : 'Agregar Curso'}
               </h2>
               <p id="modal-description" className="text-sm text-gray-600">
@@ -137,7 +137,7 @@ const CourseModal: React.FC<CourseModalProps> = ({ isOpen, onClose, onSave, cour
         </div>
 
         {/* Form */}
-        <div className="p-6 space-y-6">
+        <div className="px-6 py-4 space-y-6">
           {/* Nombre del curso */}
           <div className="space-y-2">
             <label className="flex items-center text-sm font-semibold text-gray-700">

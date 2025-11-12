@@ -97,10 +97,10 @@ export default function LoginPage() {
       style={{ backgroundImage: "url('/scuela.jpg')" }}
     >
       <button
-        className="absolute top-5 left-5 bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700"
+        className="absolute top-6 left-6 bg-slate-800 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-700 transition-all duration-200 shadow-sm"
         onClick={() => router.push("/")}
       >
-        Regresar
+        ← Regresar
       </button>
 
 

@@ -100,14 +100,6 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
       hasError = true;
     }
 
-    if (!email.trim()) {
-      setEmailError('El email es obligatorio');
-      hasError = true;
-    } else if (!/^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
-      setEmailError('El email debe tener un formato válido');
-      hasError = true;
-    }
-
     if (!password) {
       setPasswordError('La contraseña es obligatoria');
       hasError = true;
@@ -160,13 +152,13 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
     >
 
       {/* Contenedor del formulario */}
-      <div className="bg-gray-900/85 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md p-6 sm:p-8 md:p-12 text-white">
+      <div className="bg-gray-900/85 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl w-full max-w-md sm:max-w-lg p-6 sm:p-8 md:p-12 text-white">
         {/* Logo */}
         <div className="text-center mb-6 sm:mb-8">
           <img
-            src="/byte.png"
+            src="/byteWhite.png"
             alt="Bytestock Logo"
-            className="mx-auto mb-4 w-full max-w-48 h-auto sm:max-w-56 object-contain"
+            className="mx-auto mb-4 w-32 h-32 sm:w-40 sm:h-40 object-contain"
           />
           <h1 className="text-xl sm:text-2xl font-semibold text-white mb-2">
             Registro de usuario
@@ -189,7 +181,7 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
                 setName(e.target.value);
                 if (nameError) setNameError(""); // Limpiar error al escribir
               }}
-              className={`w-full pl-12 pr-4 py-2.5 sm:py-3 rounded-lg bg-gray-800/70 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+              className={`w-full pl-12 pr-4 py-2.5 sm:py-3 rounded-lg bg-gray-800/70 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all bg-gray-800 ${
                 (nameError || authError) ? 'border-red-500 focus:ring-red-500' : 'border-gray-600/50 focus:ring-blue-500'
               }`}
             />
@@ -218,7 +210,7 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
                 setEmail(e.target.value);
                 if (emailError) setEmailError(""); // Limpiar error al escribir
               }}
-              className={`w-full pl-12 pr-4 py-2.5 sm:py-3 rounded-lg bg-gray-800/70 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+              className={`w-full pl-12 pr-4 py-2.5 sm:py-3 rounded-lg bg-gray-800/70 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all bg-gray-800 ${
                 (emailError || authError) ? 'border-red-500 focus:ring-red-500' : 'border-gray-600/50 focus:ring-blue-500'
               }`}
             />
@@ -241,7 +233,7 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
                 setPassword(e.target.value);
                 if (passwordError) setPasswordError(""); // Limpiar error al escribir
               }}
-              className={`w-full pl-12 pr-12 py-2.5 sm:py-3 rounded-lg bg-gray-800/70 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+              className={`w-full pl-12 pr-12 py-2.5 sm:py-3 rounded-lg bg-gray-800/70 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all bg-gray-800 ${
                 (passwordError || authError) ? 'border-red-500 focus:ring-red-500' : 'border-gray-600/50 focus:ring-blue-500'
               }`}
             />
@@ -270,7 +262,7 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
                 if (roleError) setRoleError(""); // Limpiar error al seleccionar
               }}
               disabled={rolesLoading}
-              className={`w-full pl-12 pr-4 py-2.5 sm:py-3 rounded-lg bg-gray-800/70 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+              className={`w-full pl-12 pr-4 py-2.5 sm:py-3 rounded-lg bg-gray-800/70 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all bg-gray-800 ${
                 (roleError || authError) ? 'border-red-500 focus:ring-red-500' : 'border-gray-600/50 focus:ring-blue-500'
               } ${rolesLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
@@ -302,7 +294,7 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
                   if (subjectError) setSubjectError(""); // Limpiar error al seleccionar
                 }}
                 disabled={subjectsLoading}
-                className={`w-full pl-12 pr-4 py-2.5 sm:py-3 rounded-lg bg-gray-800/70 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${subjectError ? 'border-red-500 focus:ring-red-500' : 'border-gray-600/50 focus:ring-blue-500'}`}
+                className={`w-full pl-12 pr-4 py-2.5 sm:py-3 rounded-lg bg-gray-800/70 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all bg-gray-800 ${subjectError ? 'border-red-500 focus:ring-red-500' : 'border-gray-600/50 focus:ring-blue-500'}`}
               >
                 <option value="" disabled>
                   {subjectsLoading ? "Cargando materias..." : "Selecciona tu materia"}

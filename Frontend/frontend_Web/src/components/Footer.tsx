@@ -1,81 +1,61 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 const Footer: React.FC = () => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    if (!isModalOpen) {
-      const timer = setTimeout(() => setSelectedImage(null), 300);
-      return () => clearTimeout(timer);
-    }
-  }, [isModalOpen]);
   return (
-    <footer className="bg-gradient-to-br from-blue-800 to-blue-900 text-white py-8">
-      <div className="container mx-auto px-4">
-        {/* Sección de desarrolladores */}
-        <div className="flex justify-center space-x-12 mb-8">
-          <div className="text-center">
-            <img
-              src="/Martin.jpg"
-              alt="Desarrollador 1"
-              className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer object-cover"
-              onClick={() => { setSelectedImage('/Martin.jpg'); setIsModalOpen(true); }}
-            />
-            <p className="font-semibold">Martin Stiben Narvaez</p>
-            <p>dev1@email.com</p>
+    <footer className="bg-slate-900 text-white py-12">
+      <div className="container mx-auto px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          {/* Información del proyecto */}
+          <div>
+            <h3 className="text-xl font-semibold mb-4 text-slate-200">SGH - Sistema de Gestión de Horarios</h3>
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Solución tecnológica avanzada para la optimización de horarios académicos
+              en instituciones educativas. Desarrollado con tecnologías modernas y
+              enfoque en la eficiencia operativa.
+            </p>
           </div>
-          <div className="text-center">
-            <img
-              src="/Racinger.jpg"
-              alt="Desarrollador 2"
-              className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer object-cover"
-              onClick={() => { setSelectedImage('/Racinger.jpg'); setIsModalOpen(true); }}
-            />
-            <p className="font-semibold">Racinger Prada Olaya</p>
-            <p>rprada82@soy.sena.co</p>
+
+          {/* Equipo de desarrollo */}
+          <div>
+            <h4 className="text-lg font-medium mb-4 text-slate-200">Equipo de Desarrollo</h4>
+            <div className="space-y-2 text-sm text-slate-400">
+              <p>Martin Stiben Narvaez</p>
+              <p>Racinger Prada Olaya</p>
+              <p>Juan Pablo Saavedra</p>
+            </div>
           </div>
-          <div className="text-center">
-            <img
-              src="/Juan.jpg"
-              alt="Desarrollador 3"
-              className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer object-cover"
-              onClick={() => { setSelectedImage('/Juan.jpg'); setIsModalOpen(true); }}
-            />
-            <p className="font-semibold">Juan Pablo Saavedra</p>
-            <p>dev3@email.com</p>
+
+          {/* Descarga de aplicación */}
+          <div>
+            <h4 className="text-lg font-medium mb-4 text-slate-200">Aplicación Móvil</h4>
+            <p className="text-slate-400 text-sm mb-4">
+              Accede al sistema desde cualquier dispositivo con nuestra aplicación nativa.
+            </p>
+            <a
+              href="/apk/SGH.apk"
+              download
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-lg"
+            >
+              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+              Descargar APK
+            </a>
           </div>
         </div>
 
-        {/* Botón para instalar APK */}
-        <div className="text-center">
-          <a
-            href="/apk/SGH.apk"
-            download
-            className="bg-blue-500 text-white px-6 py-3 rounded-full shadow-md hover:bg-blue-600 transition"
-          >
-            Instalar APK
-          </a>
+        {/* Línea divisoria */}
+        <div className="border-t border-slate-800 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <p className="text-slate-500 text-sm">
+              © 2024 SGH. Todos los derechos reservados.
+            </p>
+            <p className="text-slate-500 text-sm mt-2 md:mt-0">
+              Desarrollado con tecnologías de vanguardia para la educación del futuro.
+            </p>
+          </div>
         </div>
       </div>
-
-      {/* Modal para imagen completa */}
-      {selectedImage && (
-        <div
-          className={`fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 transition-opacity duration-300 ${
-            isModalOpen ? 'opacity-100' : 'opacity-0'
-          }`}
-          onClick={() => setIsModalOpen(false)}
-        >
-          <img
-            src={selectedImage}
-            alt="Imagen completa"
-            className={`max-w-full max-h-full transition-transform duration-300 ${
-              isModalOpen ? 'scale-100' : 'scale-90'
-            }`}
-          />
-        </div>
-      )}
     </footer>
   );
 };

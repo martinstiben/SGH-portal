@@ -10,34 +10,48 @@ import React from "react";
  */
 const HeroContent: React.FC = React.memo(() => {
   return (
-    <div className="max-w-xl space-y-6 text-center lg:text-left z-10 mt-20 lg:mt-0">
+    <div className="space-y-6">
       {/* Título */}
-      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-snug sm:leading-tight text-gray-800 opacity-0 animate-fade-in delay-1">
-        Gestiona tus horarios escolares{" "}
-        <span className="underline decoration-yellow-400 decoration-4">
-          de manera eficiente
+      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-slate-800">
+        Sistema de Gestión de Horarios{" "}
+        <span className="text-blue-600">
+          Académicos
         </span>
-        , <br className="hidden sm:block" />
-        cada día, a cada hora.
+        <br className="hidden sm:block" />
+        Optimizado para Instituciones Educativas
       </h1>
 
-      {/* Lista */}
-      <ul className="space-y-3 text-gray-600 text-base sm:text-lg opacity-0 animate-fade-in delay-2">
-        <li className="flex items-center justify-center lg:justify-start gap-2 sm:gap-3">
-          <span className="text-xl sm:text-2xl">📅</span>
-          <span>Generación automática de horarios escolares</span>
+      {/* Subtítulo */}
+      <p className="text-lg text-slate-600 max-w-lg">
+        Automatiza la creación de horarios escolares con algoritmos avanzados,
+        garantizando eficiencia operativa y satisfacción docente.
+      </p>
+
+      {/* Lista de características */}
+      <ul className="space-y-4 text-slate-700">
+        <li className="flex items-start gap-3">
+          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="text-blue-600 text-sm font-bold">✓</span>
+          </div>
+          <span className="text-base">Algoritmos de optimización para distribución equitativa de cargas docentes</span>
         </li>
-        <li className="flex items-center justify-center lg:justify-start gap-2 sm:gap-3">
-          <span className="text-xl sm:text-2xl">👨‍🏫</span>
-          <span>Gestión completa de profesores y asignaturas</span>
+        <li className="flex items-start gap-3">
+          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="text-blue-600 text-sm font-bold">✓</span>
+          </div>
+          <span className="text-base">Gestión integral de recursos humanos y curriculares</span>
         </li>
-        <li className="flex items-center justify-center lg:justify-start gap-2 sm:gap-3">
-          <span className="text-xl sm:text-2xl">📊</span>
-          <span>Reportes y estadísticas en tiempo real</span>
+        <li className="flex items-start gap-3">
+          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="text-blue-600 text-sm font-bold">✓</span>
+          </div>
+          <span className="text-base">Dashboard analítico con métricas de rendimiento institucional</span>
         </li>
-        <li className="flex items-center justify-center lg:justify-start gap-2 sm:gap-3">
-          <span className="text-xl sm:text-2xl">🔒</span>
-          <span>Seguridad y privacidad garantizada</span>
+        <li className="flex items-start gap-3">
+          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="text-blue-600 text-sm font-bold">✓</span>
+          </div>
+          <span className="text-base">Arquitectura segura con encriptación de datos y autenticación robusta</span>
         </li>
       </ul>
     </div>

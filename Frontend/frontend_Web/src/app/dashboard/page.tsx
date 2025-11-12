@@ -130,9 +130,9 @@ export default function DashboardPage() {
         )}
 
         {userRole === "ESTUDIANTE" && (
-          <div className="bg-white p-6 rounded-xl shadow my-6">
-            <h2 className="text-xl font-semibold mb-4">Mis Horarios</h2>
-            <p className="text-gray-600">Aquí podrás ver tus horarios de clases asignados.</p>
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 my-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Mis Horarios</h2>
+            <p className="text-sm text-gray-600">Aquí podrás ver tus horarios de clases asignados.</p>
             {/* TODO: Implement schedule viewing component */}
           </div>
         )}
@@ -148,13 +148,13 @@ export default function DashboardPage() {
 
             {/* Reportes */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white p-6 rounded-xl shadow">
-                <h3 className="text-lg font-semibold mb-4">Estadísticas Generales</h3>
-                <p className="text-gray-600">Panel de estadísticas del sistema.</p>
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Estadísticas Generales</h3>
+                <p className="text-sm text-gray-600">Panel de estadísticas del sistema.</p>
               </div>
-              <div className="bg-white p-6 rounded-xl shadow">
-                <h3 className="text-lg font-semibold mb-4">Reportes</h3>
-                <p className="text-gray-600">Generación de reportes del sistema.</p>
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Reportes</h3>
+                <p className="text-sm text-gray-600">Generación de reportes del sistema.</p>
               </div>
             </div>
           </>

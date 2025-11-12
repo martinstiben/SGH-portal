@@ -13,9 +13,9 @@ export default function DashboardLayout({
   useAuth();
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
-      <div className="ml-60 flex-1">
+      <div className="ml-60 flex-1 bg-gray-50">
         {children}
       </div>
       <Profile />

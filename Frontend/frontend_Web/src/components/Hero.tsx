@@ -20,56 +20,32 @@ import HeroDecorations from "./HeroDecorations";
  */
 export default function Hero() {
   return (
-    <>
-      <style>{`
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
+    <div className="relative min-h-screen bg-gradient-to-br from-slate-50 to-white flex flex-col lg:flex-row items-center justify-center px-6 sm:px-10 lg:px-20 py-16">
 
-        .animate-fade-in {
-          animation: fade-in 1s ease-out forwards;
-        }
+      {/* Logo esquina */}
+      <div className="absolute top-8 left-8 lg:top-12 lg:left-16">
+        <span className="text-slate-900 font-extrabold text-3xl lg:text-4xl tracking-tight drop-shadow-sm">SGH</span>
+      </div>
 
-        .delay-1 {
-          animation-delay: 0.3s;
-        }
-        .delay-2 {
-          animation-delay: 0.6s;
-        }
-        .delay-3 {
-          animation-delay: 0.9s;
-        }
-        .delay-4 {
-          animation-delay: 1.2s;
-        }
-      `}</style>
+      {/* Botón ingresar */}
+      <Link
+        href="/login"
+        className="absolute top-6 right-6 lg:top-8 lg:right-8 bg-slate-800 text-white px-5 py-2.5 rounded-lg shadow-lg hover:bg-slate-700 transition-all duration-200 text-sm font-medium"
+      >
+        Acceder
+      </Link>
 
-      <div className="relative min-h-screen bg-gradient-to-br from-blue-50 to-white font-sans flex flex-col lg:flex-row items-center justify-between px-6 sm:px-10 lg:px-20 py-10 overflow-hidden">
+      {/* Columna izquierda */}
+      <div className="max-w-2xl space-y-8 text-center lg:text-left z-10 animate-slideInLeft">
+        <HeroContent />
+        <HeroStats />
+      </div>
 
-        {/* Logo esquina */}
-        <div className="absolute top-12 left-16 sm:top-14 sm:left-20">
-          <span className="text-black font-bold text-3xl sm:text-4xl">SGH</span>
-        </div>
-
-        {/* Botón ingresar */}
-        <Link
-          href="/login"
-          className="absolute top-4 right-4 sm:top-6 sm:right-6 bg-blue-500 text-white px-4 py-2 sm:px-6 sm:py-2 rounded-full shadow-md hover:bg-blue-600 transition text-sm sm:text-base"
-        >
-          Ingresar
-        </Link>
-
-        {/* Columna izquierda */}
-        <div className="max-w-xl space-y-6 text-center lg:text-left z-10 mt-20 lg:mt-0">
-          <HeroContent />
-          <HeroStats />
-        </div>
-
-        {/* Columna derecha */}
+      {/* Columna derecha */}
+      <div className="animate-slideInRight">
         <HeroDecorations />
       </div>
-    </>
+    </div>
   );
 }
 

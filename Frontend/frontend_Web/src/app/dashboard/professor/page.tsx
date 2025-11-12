@@ -211,7 +211,7 @@ export default function ProfessorPage() {
         )}
         {loading ? (
           <div className="my-6 text-center">
-            <p className="text-gray-500">Cargando profesores y usuarios...</p>
+            <p className="text-sm text-gray-600">Cargando profesores y usuarios...</p>
           </div>
         ) : (
           <div className="my-6">
@@ -244,21 +244,21 @@ export default function ProfessorPage() {
 
       {isConfirmModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
-            <h2 className="text-lg font-semibold mb-4">Confirmar eliminación</h2>
-            <p className="mb-6">
-              ¿Estás seguro de que deseas eliminar el profesor "{teachers.find(t => t.teacherId === teacherToDelete)?.teacherName}"? Esta acción no se puede deshacer.
+          <div className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full mx-4 border border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Confirmar eliminación</h2>
+            <p className="text-sm text-gray-600 mb-6">
+              ¿Estás seguro de que deseas eliminar el profesor "<span className="font-semibold text-gray-900">{teachers.find(t => t.teacherId === teacherToDelete)?.teacherName}</span>"? Esta acción no se puede deshacer.
             </p>
-            <div className="flex justify-end space-x-4">
+            <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setIsConfirmModalOpen(false)}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                className="px-5 py-2.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-all duration-200"
               >
                 Cancelar
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                className="px-5 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-all duration-200"
               >
                 Eliminar
               </button>

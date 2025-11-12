@@ -29,11 +29,10 @@ const ProfessorTable = ({ teachers, onEdit, onDelete, onManageAvailability }: Pr
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h">
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-100 border-b border-gray-200">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
                   Nombre completo
@@ -55,8 +54,8 @@ const ProfessorTable = ({ teachers, onEdit, onDelete, onManageAvailability }: Pr
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     <span className="font-medium">{teacher.teacherName}</span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-medium">
-                    {teacher.subjectName || 'Sin asignar'}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                    {teacher.subjectName || <span className="text-gray-500">Sin asignar</span>}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                     {teacher.availabilityDays || 'No configurada'}
@@ -92,12 +91,11 @@ const ProfessorTable = ({ teachers, onEdit, onDelete, onManageAvailability }: Pr
           </table>
         </div>
 
-        {teachers.length === 0 && (
-          <div className="px-6 py-12 text-center">
-            <p className="text-gray-500 text-sm">No hay profesores ni usuarios registrados</p>
-          </div>
-        )}
-      </div>
+      {teachers.length === 0 && (
+        <div className="px-6 py-12 text-center">
+          <p className="text-sm text-gray-600">No hay profesores ni usuarios registrados</p>
+        </div>
+      )}
     </div>
   );
 };

@@ -50,34 +50,34 @@ const ScheduleGenerateModal: React.FC<ScheduleGenerateModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-        <h2 className="text-lg font-semibold mb-4">Generar Horario</h2>
-        <p className="mb-4">Configure los parámetros para generar el horario automáticamente.</p>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-xl p-6 max-w-md w-full border border-gray-200">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Generar Horario</h2>
+        <p className="text-sm text-gray-600 mb-6">Configure los parámetros para generar el horario automáticamente.</p>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Fecha de inicio del período *
             </label>
             <input
               type="date"
               value={periodStart}
               onChange={(e) => setPeriodStart(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Fecha de fin del período *
             </label>
             <input
               type="date"
               value={periodEnd}
               onChange={(e) => setPeriodEnd(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
               required
             />
           </div>
@@ -109,7 +109,7 @@ const ScheduleGenerateModal: React.FC<ScheduleGenerateModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Parámetros adicionales (opcional)
             </label>
             <input
@@ -117,25 +117,25 @@ const ScheduleGenerateModal: React.FC<ScheduleGenerateModalProps> = ({
               value={params}
               onChange={(e) => setParams(e.target.value)}
               placeholder="Descripción o parámetros adicionales"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
             />
           </div>
         </div>
 
-        <div className="flex space-x-4 mt-6">
-          <button
-            onClick={handleSubmit}
-            disabled={isGenerating}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isGenerating ? 'Generando...' : 'Generar'}
-          </button>
+        <div className="flex justify-end space-x-3 mt-6">
           <button
             onClick={onClose}
             disabled={isGenerating}
-            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-2.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancelar
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={isGenerating}
+            className="px-5 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isGenerating ? 'Generando...' : 'Generar'}
           </button>
         </div>
       </div>

@@ -60,7 +60,7 @@ const SubjectModal: React.FC<SubjectModalProps> = ({ isOpen, onClose, onSave, su
               <BookOpen className="w-6 h-6 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-xl font-bold text-gray-900">
                 {subject ? 'Editar Materia' : 'Agregar Materia'}
               </h2>
               <p className="text-sm text-gray-600">
@@ -77,7 +77,7 @@ const SubjectModal: React.FC<SubjectModalProps> = ({ isOpen, onClose, onSave, su
         </div>
 
         {/* Form */}
-        <div className="p-6 space-y-6">
+        <div className="px-6 py-4 space-y-6">
           {/* Nombre */}
           <div className="space-y-2">
             <label className="flex items-center text-sm font-semibold text-gray-700">

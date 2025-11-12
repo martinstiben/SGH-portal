@@ -70,11 +70,10 @@ const TableCourse = ({ courses, onEdit, onDelete }: TableCourseProps) => {
   });
 
   return (
-    <div className="p-6 bg-gray-50 min-h">
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-100 border-b border-gray-200">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
                   Nombre
@@ -94,18 +93,18 @@ const TableCourse = ({ courses, onEdit, onDelete }: TableCourseProps) => {
               {sortedCourses.map((course) => {
                 const gradeNumber = course.courseName.match(/\d+/)?.[0];
                 const gradeName = convertCourseName(course.courseName);
-                const gradeColor = gradeNumber === '1' ? 'text-green-600 bg-green-100' :
-                  gradeNumber === '2' ? 'text-yellow-600 bg-yellow-100' :
-                  gradeNumber === '3' ? 'text-purple-600 bg-purple-100' :
-                  gradeNumber === '4' ? 'text-red-600 bg-red-100' :
-                  gradeNumber === '5' ? 'text-indigo-600 bg-indigo-100' :
-                  gradeNumber === '6' ? 'text-pink-600 bg-pink-100' :
-                  gradeNumber === '7' ? 'text-teal-600 bg-teal-100' :
-                  gradeNumber === '8' ? 'text-orange-600 bg-orange-100' :
-                  gradeNumber === '9' ? 'text-cyan-600 bg-cyan-100' :
-                  gradeNumber === '10' ? 'text-lime-600 bg-lime-100' :
-                  gradeNumber === '11' ? 'text-amber-600 bg-amber-100' :
-                  'text-blue-600 bg-blue-100';
+                const gradeColor = gradeNumber === '1' ? 'text-green-700 bg-green-50' :
+                  gradeNumber === '2' ? 'text-yellow-700 bg-yellow-50' :
+                  gradeNumber === '3' ? 'text-purple-700 bg-purple-50' :
+                  gradeNumber === '4' ? 'text-red-700 bg-red-50' :
+                  gradeNumber === '5' ? 'text-indigo-700 bg-indigo-50' :
+                  gradeNumber === '6' ? 'text-pink-700 bg-pink-50' :
+                  gradeNumber === '7' ? 'text-teal-700 bg-teal-50' :
+                  gradeNumber === '8' ? 'text-orange-700 bg-orange-50' :
+                  gradeNumber === '9' ? 'text-cyan-700 bg-cyan-50' :
+                  gradeNumber === '10' ? 'text-lime-700 bg-lime-50' :
+                  gradeNumber === '11' ? 'text-amber-700 bg-amber-50' :
+                  'text-blue-700 bg-blue-50';
 
                 return (
                   <tr key={course.courseId} className="hover:bg-gray-50 transition-colors">
@@ -117,22 +116,22 @@ const TableCourse = ({ courses, onEdit, onDelete }: TableCourseProps) => {
                         {gradeName}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-medium">
-                      {course.directorName || 'Sin asignar'}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                      {course.directorName || <span className="text-gray-500">Sin asignar</span>}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
                         <button
                           onClick={() => handleEdit(course.courseId)}
-                          className="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-600 bg-blue-100 rounded hover:bg-blue-200 transition-colors"
+                          className="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors"
                         >
                           <Edit className="w-3 h-3 mr-1" />
                           Editar
                         </button>
-                        <span className="text-gray-300">|</span>
+                        <span className="text-gray-400 mx-1">|</span>
                         <button
                           onClick={() => handleDelete(course.courseId)}
-                          className="inline-flex items-center px-3 py-1 text-xs font-medium text-red-600 bg-red-100 rounded hover:bg-red-200 transition-colors"
+                          className="inline-flex items-center px-3 py-1 text-xs font-medium text-red-700 bg-red-50 rounded-md hover:bg-red-100 transition-colors"
                         >
                           <Trash2 className="w-3 h-3 mr-1" />
                           Eliminar
@@ -146,12 +145,11 @@ const TableCourse = ({ courses, onEdit, onDelete }: TableCourseProps) => {
           </table>
         </div>
 
-        {sortedCourses.length === 0 && (
-          <div className="px-6 py-12 text-center">
-            <p className="text-gray-500 text-sm">No hay cursos registrados</p>
-          </div>
-        )}
-      </div>
+      {sortedCourses.length === 0 && (
+        <div className="px-6 py-12 text-center">
+          <p className="text-sm text-gray-600">No hay cursos registrados</p>
+        </div>
+      )}
     </div>
   );
 };

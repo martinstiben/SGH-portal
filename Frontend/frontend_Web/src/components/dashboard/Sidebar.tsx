@@ -203,7 +203,7 @@ export default function Sidebar() {
                       className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                         openMenu === item.label
                           ? "bg-blue-50 text-blue-600 shadow-sm"
-                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                          : "text-gray-600 hover:bg-gray-50"
                       }`}
                     >
                       <span className="flex items-center gap-3">
@@ -229,7 +229,7 @@ export default function Sidebar() {
                               className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                                 activeItem === sub.label
                                   ? "bg-blue-100 text-blue-600"
-                                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                                  : "text-gray-600 hover:bg-gray-50"
                               }`}
                             >
                               {sub.label}
@@ -248,7 +248,7 @@ export default function Sidebar() {
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                       activeItem == item.label
                         ? "bg-blue-50 text-blue-600 shadow-sm"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                        : "text-gray-600 hover:bg-gray-50"
                     }`}
                   >
                     <item.icon size={20} />

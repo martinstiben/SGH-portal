@@ -260,7 +260,7 @@ const AvailabilityModal: React.FC<AvailabilityModalProps> = ({ isOpen, onClose, 
               <Calendar className="w-6 h-6 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-xl font-bold text-gray-900">
                 Disponibilidad de {teacherName}
               </h2>
               <p className="text-sm text-gray-600">

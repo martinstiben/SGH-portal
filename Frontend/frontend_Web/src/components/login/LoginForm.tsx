@@ -62,20 +62,11 @@ export default function LoginForm({ onBack, onSubmit, authError, successMessage 
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 relative bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage:
-          'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1)), url("data:image/svg+xml,%3Csvg width="100" height="100" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3Cpattern id="grain" patternUnits="userSpaceOnUse" width="100" height="100"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.1"/%3E%3C/pattern%3E%3C/defs%3E%3Crect width="100%25" height="100%25" fill="url(%23grain)"/%3E%3C/svg%3E")',
-      }}
-    >
-
-      {/* Contenedor del formulario */}
-      <div className="bg-gray-900/85 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md p-6 sm:p-8 md:p-12 text-white">
+    <div className="bg-gray-900/85 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md p-6 sm:p-8 md:p-12 text-white">
         {/* Logo */}
         <div className="text-center mb-6 sm:mb-8">
           <img
-            src="/byte.png"
+            src="/byteWhite.png"
             alt="Bytestock Logo"
             className="mx-auto mb-4 w-full max-w-48 h-auto sm:max-w-56 object-contain"
           />
@@ -106,7 +97,7 @@ export default function LoginForm({ onBack, onSubmit, authError, successMessage 
                 setEmail(e.target.value);
                 if (emailError) setEmailError(""); // Limpiar error al escribir
               }}
-              className={`w-full pl-12 pr-4 py-2.5 sm:py-3 rounded-lg bg-gray-800/70 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+              className={`w-full pl-12 pr-4 py-2.5 sm:py-3 rounded-lg bg-gray-800/70 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all bg-gray-800 ${
                 (emailError || authError) ? 'border-red-500 focus:ring-red-500' : 'border-gray-600/50 focus:ring-blue-500'
               }`}
             />
@@ -129,7 +120,7 @@ export default function LoginForm({ onBack, onSubmit, authError, successMessage 
                 setPassword(e.target.value);
                 if (passwordError) setPasswordError(""); // Limpiar error al escribir
               }}
-              className={`w-full pl-12 pr-12 py-2.5 sm:py-3 rounded-lg bg-gray-800/70 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+              className={`w-full pl-12 pr-12 py-2.5 sm:py-3 rounded-lg bg-gray-800/70 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all bg-gray-800 ${
                 (passwordError || authError) ? 'border-red-500 focus:ring-red-500' : 'border-gray-600/50 focus:ring-blue-500'
               }`}
             />
@@ -179,11 +170,5 @@ export default function LoginForm({ onBack, onSubmit, authError, successMessage 
           </p>
         </div>
       </div>
-
-      {/* Footer */}
-      <div className="absolute bottom-3 sm:bottom-4 text-gray-400 text-xs sm:text-sm text-center w-full">
-        Derechos reservados ©Bytestock
-      </div>
-    </div>
-  );
-}
+    );
+  }

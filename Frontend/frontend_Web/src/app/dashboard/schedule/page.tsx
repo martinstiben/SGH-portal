@@ -528,9 +528,9 @@ export default function SchedulePage() {
     const courseName = course ? course.courseName : 'Curso';
 
     return (
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="p-4 bg-gray-100 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-800">Horario del {courseName}</h3>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="p-4 bg-gray-50 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">Horario del {courseName}</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -610,21 +610,21 @@ export default function SchedulePage() {
     <>
       {isConfirmModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
-            <h2 className="text-lg font-semibold mb-4">Confirmar eliminación</h2>
-            <p className="mb-6">
-              ¿Estás seguro de que deseas eliminar el horario "{scheduleToDelete?.scheduleName}"? Esta acción no se puede deshacer.
+          <div className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full mx-4 border border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Confirmar eliminación</h2>
+            <p className="text-sm text-gray-600 mb-6">
+              ¿Estás seguro de que deseas eliminar el horario "<span className="font-semibold text-gray-900">{scheduleToDelete?.scheduleName}</span>"? Esta acción no se puede deshacer.
             </p>
-            <div className="flex justify-end space-x-4">
+            <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setIsConfirmModalOpen(false)}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                className="px-5 py-2.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-all duration-200"
               >
                 Cancelar
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                className="px-5 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-all duration-200"
               >
                 Eliminar
               </button>
@@ -663,38 +663,38 @@ export default function SchedulePage() {
 
         {/* Reportes */}
         <div className="my-6">
-          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-            <h2 className="text-xl font-bold mb-6 text-gray-800 flex items-center">
+          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <h2 className="text-xl font-bold mb-6 text-gray-900 flex items-center">
               <span className="mr-2">📤</span>
               Exportar Horarios
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="group flex flex-col items-center p-6 bg-gradient-to-br from-red-50 to-red-100 rounded-xl hover:from-red-100 hover:to-red-200 transition-all duration-300 cursor-pointer border border-red-200 hover:border-red-300 hover:shadow-lg hover:-translate-y-1" onClick={() => exportSchedule('pdf', 'all')}>
+              <div className="group flex flex-col items-center p-6 bg-red-50 rounded-xl hover:bg-red-100 transition-all duration-300 cursor-pointer border border-red-200 hover:border-red-300 hover:shadow-lg hover:-translate-y-1" onClick={() => exportSchedule('pdf', 'all')}>
                 <div className="p-3 bg-red-500 rounded-full mb-3 group-hover:bg-red-600 transition-colors">
                   <FileText className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-sm font-semibold text-gray-800 mb-1">PDF</span>
+                <span className="text-sm font-semibold text-gray-900 mb-1">PDF</span>
                 <span className="text-xs text-gray-600">Profesores</span>
               </div>
-              <div className="group flex flex-col items-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl hover:from-green-100 hover:to-green-200 transition-all duration-300 cursor-pointer border border-green-200 hover:border-green-300 hover:shadow-lg hover:-translate-y-1" onClick={() => exportSchedule('excel', 'all')}>
+              <div className="group flex flex-col items-center p-6 bg-green-50 rounded-xl hover:bg-green-100 transition-all duration-300 cursor-pointer border border-green-200 hover:border-green-300 hover:shadow-lg hover:-translate-y-1" onClick={() => exportSchedule('excel', 'all')}>
                 <div className="p-3 bg-green-500 rounded-full mb-3 group-hover:bg-green-600 transition-colors">
                   <FileSpreadsheet className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-sm font-semibold text-gray-800 mb-1">Excel</span>
+                <span className="text-sm font-semibold text-gray-900 mb-1">Excel</span>
                 <span className="text-xs text-gray-600">Profesores</span>
               </div>
-              <div className="group flex flex-col items-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl hover:from-blue-100 hover:to-blue-200 transition-all duration-300 cursor-pointer border border-blue-200 hover:border-blue-300 hover:shadow-lg hover:-translate-y-1" onClick={() => exportSchedule('image', 'all')}>
+              <div className="group flex flex-col items-center p-6 bg-blue-50 rounded-xl hover:bg-blue-100 transition-all duration-300 cursor-pointer border border-blue-200 hover:border-blue-300 hover:shadow-lg hover:-translate-y-1" onClick={() => exportSchedule('image', 'all')}>
                 <div className="p-3 bg-blue-500 rounded-full mb-3 group-hover:bg-blue-600 transition-colors">
                   <Image className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-sm font-semibold text-gray-800 mb-1">Imagen</span>
+                <span className="text-sm font-semibold text-gray-900 mb-1">Imagen</span>
                 <span className="text-xs text-gray-600">Horarios</span>
               </div>
-              <div className="group flex flex-col items-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl hover:from-purple-100 hover:to-purple-200 transition-all duration-300 cursor-pointer border border-purple-200 hover:border-purple-300 hover:shadow-lg hover:-translate-y-1" onClick={() => exportSchedule('image', 'all', 0)}>
+              <div className="group flex flex-col items-center p-6 bg-purple-50 rounded-xl hover:bg-purple-100 transition-all duration-300 cursor-pointer border border-purple-200 hover:border-purple-300 hover:shadow-lg hover:-translate-y-1" onClick={() => exportSchedule('image', 'all', 0)}>
                 <div className="p-3 bg-purple-500 rounded-full mb-3 group-hover:bg-purple-600 transition-colors">
                   <Image className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-sm font-semibold text-gray-800 mb-1">Imagen</span>
+                <span className="text-sm font-semibold text-gray-900 mb-1">Imagen</span>
                 <span className="text-xs text-gray-600">Profesores</span>
               </div>
             </div>
@@ -702,8 +702,8 @@ export default function SchedulePage() {
  
           {/* Asignar Horario Manual */}
           <div className="my-6">
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-              <h2 className="text-xl font-bold mb-6 text-gray-800 flex items-center">
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <h2 className="text-xl font-bold mb-6 text-gray-900 flex items-center">
                 <span className="mr-2">✏️</span>
                 Asignar Horario Manual
               </h2>
@@ -825,7 +825,7 @@ export default function SchedulePage() {
                         <Edit className="w-6 h-6 text-blue-600" />
                       </div>
                       <div>
-                        <h2 className="text-2xl font-bold text-gray-900">Editar Horario</h2>
+                        <h2 className="text-xl font-bold text-gray-900">Editar Horario</h2>
                         <p className="text-sm text-gray-600">Modifica la información del horario</p>
                       </div>
                     </div>
@@ -984,8 +984,8 @@ export default function SchedulePage() {
 
             {/* Ver Horario de Curso */}
             <div className="my-6">
-              <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
+              <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+                <h3 className="text-lg font-semibold mb-4 text-gray-900 flex items-center">
                   <span className="mr-2">📅</span>
                   Ver Horario de Curso
                 </h3>
@@ -1014,9 +1014,9 @@ export default function SchedulePage() {
             {/* Mostrar Horario del Curso */}
             {selectedCourse && (
               <div className="my-6">
-                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold text-gray-800 flex items-center">
+                    <h2 className="text-xl font-bold text-gray-900 flex items-center">
                       <span className="mr-2">📋</span>
                       Horario del Curso
                     </h2>

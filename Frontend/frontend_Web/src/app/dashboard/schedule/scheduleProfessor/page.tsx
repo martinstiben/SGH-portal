@@ -90,9 +90,9 @@ const renderScheduleTable = (schedules: Schedule[], teacherName: string, key: st
   const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 
   return (
-    <div key={key} className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-      <div className="p-4 bg-gray-100 border-b border-gray-200 flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-800">{teacherName}</h3>
+    <div key={key} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+      <div className="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+        <h3 className="text-lg font-semibold text-gray-900">{teacherName}</h3>
         <div className="flex space-x-2">
           <button
             onClick={() => exportSchedule('pdf', 'teacher', parseInt(key))}
@@ -249,9 +249,9 @@ export default function ProfessorPage() {
             return teacherSchedules.length > 0 ? (
               renderScheduleTable(teacherSchedules, teacher.teacherName, teacher.teacherId.toString(), courseMap)
             ) : (
-              <div key={teacher.teacherId} className="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h3 className="text-lg font-semibold text-gray-800">{teacher.teacherName}</h3>
-                <p className="text-gray-500">No hay horarios asignados para este profesor.</p>
+              <div key={teacher.teacherId} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">{teacher.teacherName}</h3>
+                <p className="text-sm text-gray-600">No hay horarios asignados para este profesor.</p>
               </div>
             );
           })}

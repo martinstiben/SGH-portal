@@ -223,10 +223,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onProfileU
                 <User className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">
+                <h2 className="text-base font-semibold text-gray-900">
                   Mi Perfil
                 </h2>
-                <p className="text-xs text-gray-500">Información personal</p>
+                <p className="text-xs text-gray-600">Información personal</p>
               </div>
             </div>
 
@@ -269,7 +269,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onProfileU
                     className="hidden"
                   />
                 </div>
-              <p className="text-xs text-gray-500 text-center">Haz clic en la cámara para cambiar tu foto</p>
+              <p className="text-xs text-gray-600 text-center">Haz clic en la cámara para cambiar tu foto</p>
               {selectedPhoto && (
                 <p className="text-xs text-green-600 text-center">Nueva foto seleccionada - se actualizará al guardar</p>
               )}

@@ -77,17 +77,17 @@ export default function ProfileCard() {
   return (
     <>
       <div
-        className="relative w-48 h-50 bg-white mt-5 rounded-xl shadow p-3 text-center cursor-pointer hover:shadow-lg transition-shadow"
-        onClick={() => setIsModalOpen(true)} // Abre el modal al hacer clic en toda la tarjeta
+        className="relative w-48 h-50 bg-white mt-5 rounded-xl shadow-sm border border-gray-100 p-4 text-center cursor-pointer hover:shadow-md transition-all duration-200"
+        onClick={() => setIsModalOpen(true)}
       >
         {/* Encabezado */}
         <div className="flex justify-between items-start">
-          <h2 className="text-sm font-medium text-gray-700">Perfil</h2>
+          <h2 className="text-sm font-semibold text-gray-900">Perfil</h2>
         </div>
 
         {/* Imagen de perfil con borde circular */}
-        <div className="mt-2 flex flex-col items-center">
-          <div className="relative w-20 h-20 rounded-full border-4 border-cyan-400 flex items-center justify-center overflow-hidden">
+        <div className="mt-3 flex flex-col items-center">
+          <div className="relative w-20 h-20 rounded-full border-4 border-blue-400 flex items-center justify-center overflow-hidden">
             <img
               src={userPhoto || "/byte.png"}
               alt="Perfil"
@@ -101,11 +101,11 @@ export default function ProfileCard() {
           </div>
 
           {/* Nombre y rol */}
-          <h3 className="mt-3 font-semibold text-gray-800 flex items-center gap-1">
+          <h3 className="mt-3 font-semibold text-gray-900 flex items-center gap-1.5">
             {userName}
-            <span className="w-3 h-3 bg-green-500 rounded-full"></span>
+            <span className="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
           </h3>
-          <p className="text-xs text-gray-500">{userRole}</p>
+          <p className="text-xs text-gray-600 mt-0.5">{userRole}</p>
         </div>
       </div>
 

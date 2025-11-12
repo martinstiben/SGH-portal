@@ -25,23 +25,22 @@ const SubjectTable = ({ subjects, onEdit, onDelete }: SubjectTableProps) => {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h">
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-100 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
-                  Nombre
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
-                  N. Profesores asociados
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
-                  Actos
-                </th>
-              </tr>
-            </thead>
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                Nombre
+              </th>
+              <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                N. Profesores asociados
+              </th>
+              <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                Acciones
+              </th>
+            </tr>
+          </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {subjects.map((subject) => (
                 <tr key={subject.subjectId} className="hover:bg-gray-50 transition-colors">
@@ -78,12 +77,11 @@ const SubjectTable = ({ subjects, onEdit, onDelete }: SubjectTableProps) => {
           </table>
         </div>
         
-        {subjects.length === 0 && (
-          <div className="px-6 py-12 text-center">
-            <p className="text-gray-500 text-sm">No hay materias registradas</p>
-          </div>
-        )}
-      </div>
+      {subjects.length === 0 && (
+        <div className="px-6 py-12 text-center">
+          <p className="text-sm text-gray-600">No hay materias registradas</p>
+        </div>
+      )}
     </div>
   );
 };
