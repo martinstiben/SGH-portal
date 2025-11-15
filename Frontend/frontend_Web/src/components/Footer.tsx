@@ -19,7 +19,6 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-lg font-medium mb-4 text-slate-200">Equipo de Desarrollo</h4>
             <div className="space-y-2 text-sm text-slate-400">
-              <p>Martin Stiben Narvaez</p>
               <p>Racinger Prada Olaya</p>
               <p>Juan Pablo Saavedra</p>
             </div>
