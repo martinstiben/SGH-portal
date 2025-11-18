@@ -2,9 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { FileText, FileSpreadsheet, Image, Edit, Trash2, X, BookOpen, Calendar, Book, User, Clock } from "lucide-react";
+import { FileText, FileSpreadsheet, Image } from "lucide-react";
 import SearchBar from "@/components/dashboard/SearchBar";
 import HeaderSchedule from "@/components/schedule/scheduleCourse/HeaderSchedule";
+import ScheduleConfirmModal from "@/components/schedule/ScheduleConfirmModal";
+import ScheduleExportSection from "@/components/schedule/ScheduleExportSection";
+import ScheduleManualForm from "@/components/schedule/ScheduleManualForm";
+import ScheduleEditModal from "@/components/schedule/ScheduleEditModal";
+import ScheduleViewSection from "@/components/schedule/ScheduleViewSection";
+import ScheduleTable from "@/components/schedule/ScheduleTable";
 import { getScheduleHistory, generateSchedule, ScheduleHistory, Schedule, createSchedule, getSchedulesByCourse, getAllSchedules, updateSchedule, deleteSchedule } from "@/api/services/scheduleApi";
 import { getAllCourses, Course } from "@/api/services/courseApi";
 import { getAllSubjects, Subject } from "@/api/services/subjectApi";
@@ -19,7 +25,7 @@ const calculateEndTime = (startTime: string): string => {
 };
 
 const exportSchedule = async (format: 'pdf' | 'excel' | 'image', type: 'course' | 'teacher' | 'all', id?: number) => {
-  let url = `http://localhost:8085/schedules/${format}`;
+  let url = `http://localhost:8082/schedules/${format}`;
   if (type === 'course' && id) {
     url += `/course/${id}`;
   } else if (type === 'teacher' && id) {
@@ -438,200 +444,16 @@ export default function SchedulePage() {
     setScheduleToDelete(null);
   };
 
-  const filteredTeachers = teachers.filter(t => {
-    if (!selectedSubject || t.subjectId !== selectedSubject) return false;
-    if (!selectedDay) return true;
-    const avails = teacherAvailabilities[t.teacherId];
-    if (!avails) return false;
-    return avails.some(a => a.day === selectedDay);
-  });
-
-  const formatAvailability = (avails: any[], selectedDay: string) => {
-    if (!avails || avails.length === 0) return 'No hay disponibilidad registrada';
-    if (!selectedDay) {
-      return avails.map(avail => {
-        const am = avail.amStart && avail.amEnd ? `AM: ${avail.amStart}-${avail.amEnd}` : '';
-        const pm = avail.pmStart && avail.pmEnd ? `PM: ${avail.pmStart}-${avail.pmEnd}` : '';
-        const times = [am, pm].filter(Boolean).join(', ');
-        return `${avail.day}: ${times}`;
-      }).join('; ');
-    }
-    const dayAvail = avails.find(a => a.day === selectedDay);
-    if (!dayAvail) return 'No tiene disponibilidad en este día';
-    const parts = [];
-    if (dayAvail.amStart && dayAvail.amEnd) {
-      parts.push(`AM: ${dayAvail.amStart}-${dayAvail.amEnd}`);
-    }
-    if (dayAvail.pmStart && dayAvail.pmEnd) {
-      parts.push(`PM: ${dayAvail.pmStart}-${dayAvail.pmEnd}`);
-    }
-    if (parts.length === 0) return 'No tiene horarios disponibles en este día';
-    return `${selectedDay}: ${parts.join(', ')}`;
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'SUCCESS': return 'text-green-600 bg-green-100';
-      case 'FAILED': return 'text-red-600 bg-red-100';
-      case 'RUNNING': return 'text-yellow-600 bg-yellow-100';
-      default: return 'text-gray-600 bg-gray-100';
-    }
-  };
-
-  const generateTimes = (schedules: Schedule[]) => {
-    const timeSet = new Set<string>();
-    schedules.forEach(schedule => {
-      timeSet.add(schedule.startTime);
-    });
-    // Always include break times
-    timeSet.add('09:00');
-    timeSet.add('12:00');
-    const sortedTimes = Array.from(timeSet).sort();
-    const times: string[] = [];
-    sortedTimes.forEach(startTime => {
-      const [hours, minutes] = startTime.split(':').map(Number);
-      let endHours = hours;
-      let endMinutes = minutes;
-      if (startTime === '09:00') {
-        // Descanso de 30 minutos
-        endMinutes += 30;
-      } else {
-        // Clases de 1 hora
-        endHours += 1;
-      }
-      const endTime = `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
-      times.push(`${formatTime(startTime)} - ${formatTime(endTime)}`);
-    });
-    return times;
-  };
-
-  const formatTime = (time: string) => {
-    const [hours, minutes] = time.split(':').map(Number);
-    const period = hours >= 12 ? 'PM' : 'AM';
-    const displayHours = hours % 12 || 12;
-    return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
-  };
-
-  const getScheduleForTimeAndDay = (schedules: Schedule[], time: string, day: string) => {
-    const [startTimeStr] = time.split(' - ');
-    const [h, m, p] = startTimeStr.split(/[: ]/);
-    const hours = p === 'PM' && h !== '12' ? parseInt(h) + 12 : p === 'AM' && h === '12' ? 0 : parseInt(h);
-    const scheduleTime = `${hours.toString().padStart(2, '0')}:${m}`;
-
-    return schedules.find(s => s.startTime.startsWith(scheduleTime) && s.day === day);
-  };
-
-  const renderScheduleTable = (schedules: Schedule[], courseId?: number) => {
-    const times = generateTimes(schedules);
-    const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
-    const course = courseId ? courses.find(c => c.courseId === courseId) : null;
-    const courseName = course ? course.courseName : 'Curso';
-
-    return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-4 bg-gray-50 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Horario del {courseName}</h3>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-100 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider min-w-32">
-                  Tiempo
-                </th>
-                {days.map((day) => (
-                  <th key={day} className="px-6 py-4 text-center text-sm font-medium text-gray-700 uppercase tracking-wider min-w-36">
-                    {day}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {times.map((time, index) => (
-                <tr key={index} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {time}
-                  </td>
-                  {days.map((day) => {
-                    const schedule = getScheduleForTimeAndDay(schedules, time, day);
-                    const isLunch = time === "12:00 PM - 1:00 PM";
-                    const isBreak = time === "9:00 AM - 9:30 AM";
-                    const content = schedule ? `${schedule.teacherName || 'Profesor'}/${schedule.subjectName || 'Materia'}` : isLunch ? "Almuerzo" : isBreak ? "Descanso" : "";
-
-                    return (
-                      <td
-                        key={day}
-                        className={`px-6 py-4 text-center text-sm relative group ${
-                          isLunch
-                            ? 'bg-orange-100 text-orange-800 font-medium'
-                            : isBreak
-                              ? 'bg-yellow-100 text-yellow-800 font-medium'
-                              : content
-                                ? 'bg-blue-100 text-blue-800 font-medium'
-                                : 'text-gray-400'
-                        }`}
-                      >
-                        <div className="relative">
-                          <div className="group-hover:opacity-0 transition-opacity duration-200">
-                            {content}
-                          </div>
-                          {schedule && (
-                            <div className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                              <button
-                                onClick={() => handleEditSchedule(schedule)}
-                                className="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-600 bg-blue-100 rounded hover:bg-blue-200 transition-colors"
-                              >
-                                <Edit className="w-3 h-3 mr-1" />
-                                Editar
-                              </button>
-                              <button
-                                onClick={() => handleDeleteSchedule(schedule)}
-                                className="inline-flex items-center px-3 py-1 text-xs font-medium text-red-600 bg-red-100 rounded hover:bg-red-200 transition-colors"
-                              >
-                                <Trash2 className="w-3 h-3 mr-1" />
-                                Eliminar
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
-  };
+  const filteredTeachers = selectedSubject ? teachers.filter(t => t.subjectId === selectedSubject) : [];
 
   return (
     <>
-      {isConfirmModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
-          <div className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full mx-4 border border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Confirmar eliminación</h2>
-            <p className="text-sm text-gray-600 mb-6">
-              ¿Estás seguro de que deseas eliminar el horario "<span className="font-semibold text-gray-900">{scheduleToDelete?.scheduleName}</span>"? Esta acción no se puede deshacer.
-            </p>
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => setIsConfirmModalOpen(false)}
-                className="px-5 py-2.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-all duration-200"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="px-5 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-all duration-200"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ScheduleConfirmModal
+        isOpen={isConfirmModalOpen}
+        scheduleToDelete={scheduleToDelete}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={confirmDelete}
+      />
 
       {/* Main content */}
       <div className="flex-1 p-6">
@@ -717,7 +539,7 @@ export default function SchedulePage() {
                       setSelectedCourse(courseId);
                       if (courseId) loadCourseSchedules(courseId);
                     }}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm transition-all duration-200"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm transition-all duration-200"
                   >
                     <option value="">Seleccionar Curso</option>
                     {courses.map((course) => (
@@ -732,7 +554,7 @@ export default function SchedulePage() {
                   <select
                     value={selectedDay}
                     onChange={(e) => setSelectedDay(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm transition-all duration-200"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm transition-all duration-200"
                   >
                     <option value="">Seleccionar Día</option>
                     {days.map((day) => (
@@ -750,7 +572,7 @@ export default function SchedulePage() {
                       setSelectedSubject(Number(e.target.value) || '');
                       setSelectedTeacher('');
                     }}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm transition-all duration-200"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm transition-all duration-200"
                   >
                     <option value="">Seleccionar Materia</option>
                     {subjects.map((subject) => (
@@ -766,7 +588,7 @@ export default function SchedulePage() {
                     value={selectedTeacher}
                     onChange={(e) => setSelectedTeacher(Number(e.target.value) || '')}
                     disabled={!selectedSubject}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm transition-all duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm transition-all duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
                   >
                     <option value="">Seleccionar Profesor</option>
                     {filteredTeachers.map((teacher) => (
@@ -793,20 +615,20 @@ export default function SchedulePage() {
                     type="time"
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm transition-all duration-200"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm transition-all duration-200"
                   />
                 </div>
               </div>
               <div className="flex flex-wrap gap-4">
                 <button
                   onClick={clearForm}
-                  className="px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-lg hover:from-gray-700 hover:to-gray-800 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                  className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
                 >
                   🗑️ Vaciar contenido
                 </button>
                 <button
                   onClick={addToSchedule}
-                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                  className="px-6 py-3 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
                 >
                   ➕ Añadir al horario
                 </button>
@@ -814,223 +636,69 @@ export default function SchedulePage() {
             </div>
 
 
-            {/* Modal de Edición */}
-            {isEditModalOpen && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                  {/* Header */}
-                  <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-blue-100 rounded-lg">
-                        <Edit className="w-6 h-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <h2 className="text-xl font-bold text-gray-900">Editar Horario</h2>
-                        <p className="text-sm text-gray-600">Modifica la información del horario</p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setIsEditModalOpen(false);
-                        setEditingSchedule(null);
-                        clearForm();
-                      }}
-                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                    >
-                      <X className="w-6 h-6 text-gray-500" />
-                    </button>
-                  </div>
+          <ScheduleEditModal
+            isOpen={isEditModalOpen}
+            courses={courses}
+            subjects={subjects}
+            teachers={teachers}
+            teacherAvailabilities={teacherAvailabilities}
+            selectedCourse={selectedCourse}
+            selectedDay={selectedDay}
+            selectedSubject={selectedSubject}
+            selectedTeacher={selectedTeacher}
+            startTime={startTime}
+            errorMessage={errorMessage}
+            onClose={() => {
+              setIsEditModalOpen(false);
+              setEditingSchedule(null);
+              clearForm();
+            }}
+            onCourseChange={setSelectedCourse}
+            onDayChange={setSelectedDay}
+            onSubjectChange={(subjectId) => {
+              setSelectedSubject(subjectId);
+              setSelectedTeacher('');
+            }}
+            onTeacherChange={setSelectedTeacher}
+            onStartTimeChange={setStartTime}
+            onUpdate={handleUpdateSchedule}
+          />
 
-                  {/* Form */}
-                  <div className="p-6 space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Curso */}
-                      <div className="space-y-2">
-                        <label className="flex items-center text-sm font-semibold text-gray-700">
-                          <BookOpen className="w-4 h-4 mr-2" />
-                          Curso
-                        </label>
-                        <select
-                          value={selectedCourse}
-                          onChange={(e) => setSelectedCourse(Number(e.target.value) || '')}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                        >
-                          <option value="">Seleccionar Curso</option>
-                          {courses.map((course) => (
-                            <option key={course.courseId} value={course.courseId}>
-                              {course.courseName}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+          <ScheduleViewSection
+            courses={courses}
+            selectedCourse={selectedCourse}
+            onCourseChange={(courseId) => {
+              setSelectedCourse(courseId);
+              if (courseId) loadCourseSchedules(courseId);
+            }}
+          />
 
-                      {/* Día */}
-                      <div className="space-y-2">
-                        <label className="flex items-center text-sm font-semibold text-gray-700">
-                          <Calendar className="w-4 h-4 mr-2" />
-                          Día
-                        </label>
-                        <select
-                          value={selectedDay}
-                          onChange={(e) => setSelectedDay(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                        >
-                          <option value="">Seleccionar Día</option>
-                          {days.map((day) => (
-                            <option key={day} value={day}>
-                              {day}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      {/* Materia */}
-                      <div className="space-y-2">
-                        <label className="flex items-center text-sm font-semibold text-gray-700">
-                          <Book className="w-4 h-4 mr-2" />
-                          Materia
-                        </label>
-                        <select
-                          value={selectedSubject}
-                          onChange={(e) => {
-                            setSelectedSubject(Number(e.target.value) || '');
-                            setSelectedTeacher('');
-                          }}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                        >
-                          <option value="">Seleccionar Materia</option>
-                          {subjects.map((subject) => (
-                            <option key={subject.subjectId} value={subject.subjectId}>
-                              {subject.subjectName}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      {/* Profesor */}
-                      <div className="space-y-2">
-                        <label className="flex items-center text-sm font-semibold text-gray-700">
-                          <User className="w-4 h-4 mr-2" />
-                          Profesor
-                        </label>
-                        <select
-                          value={selectedTeacher}
-                          onChange={(e) => setSelectedTeacher(Number(e.target.value) || '')}
-                          disabled={!selectedSubject}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        >
-                          <option value="">Seleccionar Profesor</option>
-                          {filteredTeachers.map((teacher) => (
-                            <option key={teacher.teacherId} value={teacher.teacherId}>
-                              {teacher.teacherName}
-                            </option>
-                          ))}
-                        </select>
-                        {selectedTeacher && teacherAvailabilities[selectedTeacher] && selectedDay && (() => {
-                          const dayAvail = teacherAvailabilities[selectedTeacher].find(a => a.day === selectedDay);
-                          if (!dayAvail) return <p className="text-red-600 text-sm mt-1">No tiene disponibilidad en este día</p>;
-                          return (
-                            <div className="text-red-600 text-sm mt-1">
-                              Disponibilidad:
-                              {dayAvail.amStart && dayAvail.amEnd && <div>AM: {dayAvail.amStart}-{dayAvail.amEnd}</div>}
-                              {dayAvail.pmStart && dayAvail.pmEnd && <div>PM: {dayAvail.pmStart}-{dayAvail.pmEnd}</div>}
-                            </div>
-                          );
-                        })()}
-                      </div>
-
-                      {/* Hora Inicio */}
-                      <div className="space-y-2">
-                        <label className="flex items-center text-sm font-semibold text-gray-700">
-                          <Clock className="w-4 h-4 mr-2" />
-                          Hora Inicio
-                        </label>
-                        <input
-                          type="time"
-                          value={startTime}
-                          onChange={(e) => setStartTime(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                        />
-                      </div>
-                    </div>
-
-                    {errorMessage && (
-                      <p className="text-red-500 text-sm">{errorMessage}</p>
-                    )}
-                  </div>
-
-                  {/* Footer */}
-                  <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
-                    <button
-                      onClick={() => {
-                        setIsEditModalOpen(false);
-                        setEditingSchedule(null);
-                        clearForm();
-                      }}
-                      className="px-6 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors font-medium"
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      onClick={handleUpdateSchedule}
-                      className="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium"
-                    >
-                      Actualizar Horario
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Ver Horario de Curso */}
+          {/* Mostrar Horario del Curso */}
+          {selectedCourse && (
             <div className="my-6">
-              <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-                <h3 className="text-lg font-semibold mb-4 text-gray-900 flex items-center">
-                  <span className="mr-2">📅</span>
-                  Ver Horario de Curso
-                </h3>
-                <div className="max-w-md">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Seleccionar Curso</label>
-                  <select
-                    value={selectedCourse || ''}
-                    onChange={(e) => {
-                      const courseId = Number(e.target.value) || '';
-                      setSelectedCourse(courseId);
-                      if (courseId) loadCourseSchedules(courseId);
-                    }}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm transition-all duration-200"
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-bold text-gray-900 flex items-center">
+                    <span className="mr-2">📋</span>
+                    Horario del Curso
+                  </h2>
+                  <button
+                    onClick={() => router.push('/dashboard/schedule/scheduleCourse')}
+                    className="px-6 py-3 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center"
                   >
-                    <option value="">Seleccionar Curso</option>
-                    {courses.map((course) => (
-                      <option key={course.courseId} value={course.courseId}>
-                        {course.courseName}
-                      </option>
-                    ))}
-                  </select>
+                    💾 Guardar Horario
+                  </button>
                 </div>
+                <ScheduleTable
+                  schedules={courseSchedules}
+                  courseId={selectedCourse ? Number(selectedCourse) : undefined}
+                  courses={courses}
+                  onEdit={handleEditSchedule}
+                  onDelete={handleDeleteSchedule}
+                />
               </div>
             </div>
-
-            {/* Mostrar Horario del Curso */}
-            {selectedCourse && (
-              <div className="my-6">
-                <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold text-gray-900 flex items-center">
-                      <span className="mr-2">📋</span>
-                      Horario del Curso
-                    </h2>
-                    <button
-                      onClick={() => router.push('/dashboard/schedule/scheduleCourse')}
-                      className="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center"
-                    >
-                      💾 Guardar Horario
-                    </button>
-                  </div>
-                  {renderScheduleTable(courseSchedules, selectedCourse ? Number(selectedCourse) : undefined)}
-                </div>
-              </div>
-            )}
+          )}
  
           </div>
         </div>
