@@ -22,7 +22,7 @@ interface EnvironmentConfig {
  * Configuración de entorno con valores por defecto
  */
 const config: EnvironmentConfig = {
-  apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8085',
+  apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8082',
   isDevelopment: process.env.NODE_ENV === 'development',
   isProduction: process.env.NODE_ENV === 'production',
   logLevel: (process.env.NEXT_PUBLIC_LOG_LEVEL as any) || 'info',
