@@ -161,6 +161,13 @@ export default function Sidebar() {
       { icon: BookOpen, label: "Materias", path: "/dashboard/subject" },
       { icon: Library, label: "Cursos", path: "/dashboard/course" },
       {
+        icon: GraduationCap,
+        label: "Usuarios",
+        children: [
+          { label: "Pendientes de Aprobación", path: "/dashboard/users/pending" },
+        ],
+      },
+      {
         icon: Calendar,
         label: "Horarios",
         children: [

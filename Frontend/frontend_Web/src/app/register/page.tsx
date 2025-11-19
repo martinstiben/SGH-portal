@@ -36,13 +36,11 @@ export default function RegisterPage() {
       const data = await register(name, email, password, role, subjectId || undefined);
 
       if (data.message) {
-        setSuccessMessage("¡Registro exitoso! Redirigiendo al login...");
-        setTimeout(() => {
-          router.push("/login");
-        }, 2000);
-      } else {
-        setAuthError("Error en el registro. Inténtalo de nuevo.");
-      }
+         setSuccessMessage("¡Registro exitoso! Tu cuenta está pendiente de aprobación por el coordinador. Recibirás una notificación por correo cuando sea revisada.");
+         // No redirigir automáticamente, dejar que el usuario decida cuándo irse
+       } else {
+         setAuthError("Error en el registro. Inténtalo de nuevo.");
+       }
     } catch (err: any) {
       if (err.response?.status === 400) {
         setAuthError("El usuario ya existe o los datos son inválidos.");
@@ -67,6 +65,13 @@ export default function RegisterPage() {
       </button>
 
       <RegisterForm onSubmit={handleRegister} authError={authError} successMessage={successMessage} />
+
+      {successMessage && (
+        <div className="fixed bottom-6 right-6 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+          <p className="text-sm font-medium">Registro completado</p>
+          <p className="text-xs mt-1">Puedes cerrar esta página o continuar explorando</p>
+        </div>
+      )}
     </div>
   );
 }
