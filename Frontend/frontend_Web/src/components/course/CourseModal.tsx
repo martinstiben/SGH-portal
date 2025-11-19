@@ -152,7 +152,7 @@ const CourseModal: React.FC<CourseModalProps> = ({ isOpen, onClose, onSave, cour
                 setCourseName(e.target.value);
                 if (errors.courseName) setErrors({ ...errors, courseName: undefined });
               }}
-              className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+              className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 ${
                 errors.courseName ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="Ingresa el nombre del curso"
@@ -175,7 +175,7 @@ const CourseModal: React.FC<CourseModalProps> = ({ isOpen, onClose, onSave, cour
             <select
               value={gradeDirectorId || ''}
               onChange={(e) => setGradeDirectorId(e.target.value ? parseInt(e.target.value) : undefined)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900"
             >
               <option value="">Selecciona un director (opcional)</option>
               {teachers.map((teacher) => (

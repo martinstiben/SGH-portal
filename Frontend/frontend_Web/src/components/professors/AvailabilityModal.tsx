@@ -319,7 +319,8 @@ const AvailabilityModal: React.FC<AvailabilityModalProps> = ({ isOpen, onClose, 
                       type="time"
                       value={amStart}
                       onChange={(e) => validateAndSetTime('amStart', e.target.value, true)}
-                      className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 bg-white shadow-sm ${
+                      style={{ colorScheme: 'dark' }}
+                      className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 bg-white text-gray-900 shadow-sm ${
                         timeErrors.amStart
                           ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
                           : 'border-blue-200 focus:ring-blue-500 focus:border-blue-500'
@@ -344,7 +345,8 @@ const AvailabilityModal: React.FC<AvailabilityModalProps> = ({ isOpen, onClose, 
                       type="time"
                       value={amEnd}
                       onChange={(e) => validateAndSetTime('amEnd', e.target.value, true)}
-                      className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 bg-white shadow-sm ${
+                      style={{ colorScheme: 'dark' }}
+                      className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 bg-white text-gray-900 shadow-sm ${
                         timeErrors.amEnd || timeErrors.amOrder
                           ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
                           : 'border-blue-200 focus:ring-blue-500 focus:border-blue-500'
@@ -379,7 +381,8 @@ const AvailabilityModal: React.FC<AvailabilityModalProps> = ({ isOpen, onClose, 
                       type="time"
                       value={pmStart}
                       onChange={(e) => validateAndSetTime('pmStart', e.target.value, false)}
-                      className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 bg-white shadow-sm ${
+                      style={{ colorScheme: 'dark' }}
+                      className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 bg-white text-gray-900 shadow-sm ${
                         timeErrors.pmStart
                           ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
                           : 'border-green-200 focus:ring-green-500 focus:border-green-500'
@@ -404,7 +407,8 @@ const AvailabilityModal: React.FC<AvailabilityModalProps> = ({ isOpen, onClose, 
                       type="time"
                       value={pmEnd}
                       onChange={(e) => validateAndSetTime('pmEnd', e.target.value, false)}
-                      className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 bg-white shadow-sm ${
+                      style={{ colorScheme: 'dark' }}
+                      className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 bg-white text-gray-900 shadow-sm ${
                         timeErrors.pmEnd || timeErrors.pmOrder
                           ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
                           : 'border-green-200 focus:ring-green-500 focus:border-green-500'

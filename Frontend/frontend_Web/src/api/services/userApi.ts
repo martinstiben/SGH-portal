@@ -261,3 +261,57 @@ export const deleteUser = async (userId: number) => {
     throw error;
   }
 };
+
+export const requestPasswordReset = async (email: string) => {
+  try {
+    const response = await fetch(`${API_URL}/request-password-reset`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.error || `Error ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error('Unknown error');
+    log.error("Error solicitando reset de contraseña", err, { email });
+    throw err;
+  }
+};
+
+export const verifyResetCode = async (email: string, verificationCode: string, newPassword: string) => {
+  try {
+    const response = await fetch(`${API_URL}/verify-reset-code`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        verificationCode,
+        newPassword,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.error || `Error ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error('Unknown error');
+    log.error("Error verificando código de reset", err, { email });
+    throw err;
+  }
+};
