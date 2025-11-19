@@ -157,8 +157,8 @@ export default function LoginForm({ onBack, onSubmit, authError, successMessage 
           <p className="text-green-400 text-sm mt-4 text-center">{successMessage}</p>
         )}
 
-        {/* Enlace a registro */}
-        <div className="text-center mt-4">
+        {/* Enlaces */}
+        <div className="text-center mt-4 space-y-2">
           <p className="text-gray-300 text-sm">
             ¿No tienes cuenta?{" "}
             <a
@@ -166,6 +166,14 @@ export default function LoginForm({ onBack, onSubmit, authError, successMessage 
               className="text-blue-400 hover:text-blue-300 underline font-medium"
             >
               Regístrate aquí
+            </a>
+          </p>
+          <p className="text-gray-300 text-sm">
+            <a
+              href="/reset-password"
+              className="text-blue-400 hover:text-blue-300 underline font-medium"
+            >
+              ¿Olvidaste tu contraseña?
             </a>
           </p>
         </div>
