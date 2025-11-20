@@ -1,15 +1,18 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { getNotifications, markAsRead, createTestNotification, Notification } from '@/api/services/notificationApi';
-import { CheckCircle, XCircle, Clock, AlertCircle, Info, TestTube } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { getNotifications, markAsRead, Notification } from '@/api/services/notificationApi';
+import { CheckCircle, XCircle, Clock, AlertCircle, Info } from 'lucide-react';
 
 interface NotificationModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onUnreadCountChange?: (unreadCount: number) => void;
 }
 
-export default function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
+export default function NotificationModal({ isOpen, onClose, onUnreadCountChange }: NotificationModalProps) {
+  const router = useRouter();
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(false);
@@ -21,14 +24,30 @@ export default function NotificationModal({ isOpen, onClose }: NotificationModal
     }
   }, [isOpen]);
 
+  // Notificar al componente padre sobre el conteo de notificaciones no leídas
+  useEffect(() => {
+    const unreadCount = notifications.filter(notif => !notif.read).length;
+    if (onUnreadCountChange) {
+      onUnreadCountChange(unreadCount);
+    }
+  }, [notifications, onUnreadCountChange]);
+
   const fetchNotifications = async () => {
     try {
       setLoading(true);
       setError("");
       const data = await getNotifications();
+      console.log('Notificaciones recibidas del backend:', data);
+      console.log('Primera notificación read:', data[0]?.read);
       setNotifications(data);
     } catch (err: any) {
       console.error('Error cargando notificaciones:', err);
+      // Si es error de autenticación, redirigir al login
+      if (err.message?.includes('401') || err.message?.includes('Error 401')) {
+        console.log("Token expirado, redirigiendo al login...");
+        router.push('/login');
+        return;
+      }
       setError(err.message || "Error al cargar notificaciones");
       setNotifications([]); // Array vacío en caso de error
     } finally {
@@ -38,20 +57,33 @@ export default function NotificationModal({ isOpen, onClose }: NotificationModal
 
   const handleMarkAsRead = async (notificationId: string) => {
     try {
+      console.log('Marcando notificación como leída:', notificationId);
       await markAsRead(notificationId);
-      setNotifications(prev =>
-        prev.map(notif =>
-          notif.id === notificationId ? { ...notif, read: true } : notif
-        )
-      );
+      console.log('Notificación marcada en el backend, actualizando estado local');
+
+      const updatedNotifications = notifications.map(notif => {
+        const match = notif.notificationId?.toString() === notificationId;
+        console.log(`Comparando ${notif.notificationId} (${typeof notif.notificationId}) con ${notificationId} (${typeof notificationId}) - Match: ${match}`);
+        return match ? { ...notif, read: true } : notif;
+      });
+
+      console.log('Notificaciones actualizadas:', updatedNotifications);
+      setNotifications(updatedNotifications);
+
+      // Actualizar inmediatamente el conteo en el componente padre
+      const unreadCount = updatedNotifications.filter(notif => !notif.read).length;
+      console.log('Nuevo conteo de no leídas:', unreadCount);
+      if (onUnreadCountChange) {
+        onUnreadCountChange(unreadCount);
+      }
     } catch (err) {
       console.error("Error marcando notificación como leída:", err);
     }
   };
 
   const getNotificationIcon = (notification: Notification) => {
-    // Usar el tipo de notificación del backend o mapear prioridades
-    const type = notification.notificationType?.toLowerCase() || notification.type || 'info';
+    // Usar el tipo de notificación del backend
+    const type = notification.notificationType?.toLowerCase() || 'info';
 
     if (type.includes('approved') || type.includes('success')) {
       return <CheckCircle className="h-5 w-5 text-green-500" />;
@@ -122,18 +154,7 @@ export default function NotificationModal({ isOpen, onClose }: NotificationModal
                 No leídas
               </button>
             </div>
-            <button
-              onClick={async () => {
-                await createTestNotification();
-                // Recargar notificaciones después de crear la de prueba
-                fetchNotifications();
-              }}
-              className="px-3 py-1.5 text-sm font-medium rounded-lg bg-green-100 text-green-700 hover:bg-green-200 transition-colors flex items-center gap-1"
-              title="Crear notificación de prueba"
-            >
-              <TestTube className="w-4 h-4" />
-              Probar
-            </button>
+
           </div>
         </div>
 
@@ -161,13 +182,13 @@ export default function NotificationModal({ isOpen, onClose }: NotificationModal
             <div className="space-y-2 p-4">
               {filteredNotifications.map((notification) => (
                 <div
-                  key={notification.notificationId || notification.id}
+                  key={notification.notificationId}
                   className={`p-4 rounded-lg border transition-all cursor-pointer ${
-                    notification.isRead || notification.read
+                    notification.read
                       ? 'bg-gray-50 border-gray-200'
                       : 'bg-blue-50 border-blue-200 hover:bg-blue-100'
                   }`}
-                  onClick={() => !(notification.isRead || notification.read) && handleMarkAsRead(String(notification.notificationId || notification.id))}
+                  onClick={() => !notification.read && handleMarkAsRead(String(notification.notificationId))}
                 >
                   <div className="flex items-start space-x-3">
                     <div className="flex-shrink-0">
@@ -175,18 +196,14 @@ export default function NotificationModal({ isOpen, onClose }: NotificationModal
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <p className={`text-sm font-medium ${
-                          notification.isRead || notification.read ? 'text-gray-900' : 'text-gray-900'
-                        }`}>
+                        <p className="text-sm font-medium text-gray-900">
                           {notification.title}
                         </p>
-                        {!(notification.isRead || notification.read) && (
+                        {!notification.read && (
                           <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                         )}
                       </div>
-                      <p className={`text-sm mt-1 ${
-                        notification.isRead || notification.read ? 'text-gray-600' : 'text-gray-700'
-                      }`}>
+                      <p className="text-sm mt-1 text-gray-700">
                         {notification.message}
                       </p>
                       <p className="text-xs text-gray-500 mt-2">

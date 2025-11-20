@@ -31,7 +31,7 @@ export const useAuth = () => {
   const logout = async () => {
     try {
       // Llamar al endpoint de logout del backend
-      const response = await fetch('http://localhost:8085/auth/logout', {
+      const response = await fetch('http://localhost:8082/auth/logout', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${getToken()}`,

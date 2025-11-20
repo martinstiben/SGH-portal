@@ -6,14 +6,28 @@ export interface Notification {
   title: string;
   message: string;
   notificationType: string;
-  isRead: boolean;
+  read: boolean;
   createdAt: string;
   priority?: string;
   category?: string;
-  // Campos calculados para compatibilidad
-  id?: string;
-  type?: 'info' | 'success' | 'warning' | 'error';
-  read?: boolean;
+  userId?: number;
+  userEmail?: string;
+  userName?: string;
+  userRole?: string;
+  actionUrl?: string;
+  actionText?: string;
+  icon?: string;
+  isArchived?: boolean;
+  expiresAt?: string;
+  metadata?: any;
+  readAt?: string;
+  priorityDisplayName?: string;
+  priorityColor?: string;
+  priorityIcon?: string;
+  age?: string;
+  isRecent?: boolean;
+  isActive?: boolean;
+  requiresImmediateAttention?: boolean;
 }
 
 /**
@@ -96,6 +110,39 @@ export const markAllAsRead = async (): Promise<void> => {
 };
 
 /**
+ * Obtiene el conteo de notificaciones no leídas
+ */
+export const getUnreadCount = async (): Promise<number> => {
+  try {
+    const token = getToken();
+    if (!token) {
+      console.warn('No hay token de autenticación disponible');
+      return 0;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/notifications/unread-count`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Error en la respuesta del servidor:', response.status, response.statusText);
+      throw new Error(`Error al obtener conteo de notificaciones: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const unreadCount = data.unreadCount || 0;
+    console.log(`Conteo de notificaciones no leídas: ${unreadCount}`);
+    return unreadCount;
+  } catch (error) {
+    console.error('Error obteniendo conteo de notificaciones no leídas:', error);
+    return 0;
+  }
+};
+
+/**
  * Elimina una notificación
  */
 export const deleteNotification = async (notificationId: string): Promise<void> => {
@@ -117,90 +164,5 @@ export const deleteNotification = async (notificationId: string): Promise<void> 
   }
 };
 
-/**
- * Crea una notificación de prueba (solo para desarrollo)
- */
-export const createTestNotification = async (): Promise<void> => {
-  try {
-    const token = getToken();
-    const response = await fetch(`${API_BASE_URL}/notifications/test-create`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
 
-    if (!response.ok) {
-      throw new Error('Error al crear notificación de prueba');
-    }
 
-    console.log('Notificación de prueba creada exitosamente');
-  } catch (error) {
-    console.error('Error creando notificación de prueba:', error);
-  }
-};
-
-/**
- * Notificaciones de ejemplo para desarrollo
- */
-const getMockNotifications = (): Notification[] => {
-  return [
-    {
-      notificationId: 1,
-      title: 'Nuevo usuario pendiente de aprobación',
-      message: 'El usuario Juan Pérez solicita registro como Maestro',
-      notificationType: 'COORDINATOR_USER_REGISTRATION_PENDING',
-      isRead: false,
-      createdAt: new Date(Date.now() - 3600000).toISOString(),
-      priority: 'HIGH',
-      category: 'user_registration',
-      // Campos de compatibilidad
-      id: '1',
-      type: 'info',
-      read: false,
-    },
-    {
-      notificationId: 2,
-      title: '¡Registro aprobado!',
-      message: 'Su solicitud de registro ha sido aprobada. Ya puede iniciar sesión en el sistema.',
-      notificationType: 'USER_REGISTRATION_APPROVED',
-      isRead: false,
-      createdAt: new Date(Date.now() - 7200000).toISOString(),
-      priority: 'HIGH',
-      category: 'user_registration',
-      // Campos de compatibilidad
-      id: '2',
-      type: 'success',
-      read: false,
-    },
-    {
-      notificationId: 3,
-      title: 'Reunión programada',
-      message: 'Tienes una reunión de coordinación mañana a las 10:00 AM',
-      notificationType: 'SYSTEM_NOTIFICATION',
-      isRead: true,
-      createdAt: new Date(Date.now() - 86400000).toISOString(),
-      priority: 'MEDIUM',
-      category: 'system',
-      // Campos de compatibilidad
-      id: '3',
-      type: 'warning',
-      read: true,
-    },
-    {
-      notificationId: 4,
-      title: 'Nuevo profesor asignado',
-      message: 'Se ha asignado un nuevo profesor para la materia Física',
-      notificationType: 'TEACHER_SCHEDULE_ASSIGNED',
-      isRead: true,
-      createdAt: new Date(Date.now() - 172800000).toISOString(),
-      priority: 'MEDIUM',
-      category: 'schedule',
-      // Campos de compatibilidad
-      id: '4',
-      type: 'info',
-      read: true,
-    },
-  ];
-};
