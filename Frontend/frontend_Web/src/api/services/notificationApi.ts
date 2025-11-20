@@ -2,13 +2,32 @@ import { getToken } from '../utils/authUtils';
 import { API_BASE_URL } from '../constants/Endpoint';
 
 export interface Notification {
-  id: string;
+  notificationId: number;
   title: string;
   message: string;
-  type: 'info' | 'success' | 'warning' | 'error';
+  notificationType: string;
   read: boolean;
   createdAt: string;
-  relatedEntity?: string;
+  priority?: string;
+  category?: string;
+  userId?: number;
+  userEmail?: string;
+  userName?: string;
+  userRole?: string;
+  actionUrl?: string;
+  actionText?: string;
+  icon?: string;
+  isArchived?: boolean;
+  expiresAt?: string;
+  metadata?: any;
+  readAt?: string;
+  priorityDisplayName?: string;
+  priorityColor?: string;
+  priorityIcon?: string;
+  age?: string;
+  isRecent?: boolean;
+  isActive?: boolean;
+  requiresImmediateAttention?: boolean;
 }
 
 /**
@@ -17,6 +36,11 @@ export interface Notification {
 export const getNotifications = async (): Promise<Notification[]> => {
   try {
     const token = getToken();
+    if (!token) {
+      console.warn('No hay token de autenticación disponible');
+      return [];
+    }
+
     const response = await fetch(`${API_BASE_URL}/notifications`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -25,14 +49,19 @@ export const getNotifications = async (): Promise<Notification[]> => {
     });
 
     if (!response.ok) {
-      throw new Error('Error al obtener notificaciones');
+      console.error('Error en la respuesta del servidor:', response.status, response.statusText);
+      throw new Error(`Error al obtener notificaciones: ${response.status}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    // El backend devuelve un objeto con la propiedad 'notifications'
+    const notifications = data.notifications || [];
+    console.log(`Obtenidas ${notifications.length} notificaciones del backend`);
+    return notifications;
   } catch (error) {
-    console.error('Error fetching notifications:', error);
-    // Retornar notificaciones de ejemplo si falla el backend
-    return getMockNotifications();
+    console.error('Error obteniendo notificaciones:', error);
+    // En caso de error, devolver array vacío para que el frontend muestre "No tienes notificaciones"
+    return [];
   }
 };
 
@@ -81,6 +110,39 @@ export const markAllAsRead = async (): Promise<void> => {
 };
 
 /**
+ * Obtiene el conteo de notificaciones no leídas
+ */
+export const getUnreadCount = async (): Promise<number> => {
+  try {
+    const token = getToken();
+    if (!token) {
+      console.warn('No hay token de autenticación disponible');
+      return 0;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/notifications/unread-count`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Error en la respuesta del servidor:', response.status, response.statusText);
+      throw new Error(`Error al obtener conteo de notificaciones: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const unreadCount = data.unreadCount || 0;
+    console.log(`Conteo de notificaciones no leídas: ${unreadCount}`);
+    return unreadCount;
+  } catch (error) {
+    console.error('Error obteniendo conteo de notificaciones no leídas:', error);
+    return 0;
+  }
+};
+
+/**
  * Elimina una notificación
  */
 export const deleteNotification = async (notificationId: string): Promise<void> => {
@@ -102,45 +164,5 @@ export const deleteNotification = async (notificationId: string): Promise<void> 
   }
 };
 
-/**
- * Notificaciones de ejemplo para desarrollo
- */
-const getMockNotifications = (): Notification[] => {
-  return [
-    {
-      id: '1',
-      title: 'Nueva asignación de horario',
-      message: 'Se ha actualizado el horario de la materia Matemáticas para el curso 10A',
-      type: 'info',
-      read: false,
-      createdAt: new Date(Date.now() - 3600000).toISOString(),
-      relatedEntity: 'schedule',
-    },
-    {
-      id: '2',
-      title: 'Solicitud aprobada',
-      message: 'Tu solicitud de cambio de horario ha sido aprobada',
-      type: 'success',
-      read: false,
-      createdAt: new Date(Date.now() - 7200000).toISOString(),
-      relatedEntity: 'schedule',
-    },
-    {
-      id: '3',
-      title: 'Reunión programada',
-      message: 'Tienes una reunión de coordinación mañana a las 10:00 AM',
-      type: 'warning',
-      read: true,
-      createdAt: new Date(Date.now() - 86400000).toISOString(),
-    },
-    {
-      id: '4',
-      title: 'Nuevo profesor asignado',
-      message: 'Se ha asignado un nuevo profesor para la materia Física',
-      type: 'info',
-      read: true,
-      createdAt: new Date(Date.now() - 172800000).toISOString(),
-      relatedEntity: 'professor',
-    },
-  ];
-};
+
+
