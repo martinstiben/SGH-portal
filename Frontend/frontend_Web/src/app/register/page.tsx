@@ -16,10 +16,11 @@ export default function RegisterPage() {
     password: string;
     role: string;
     subjectId?: number | null;
+    courseId?: number | null;
     acceptTerms: boolean;
   }
 
-  const handleRegister = async ({ name, email, password, role, subjectId }: RegisterFormValues) => {
+  const handleRegister = async ({ name, email, password, role, subjectId, courseId }: RegisterFormValues) => {
     if (!name || !email || !password || !role) {
       setAuthError("Por favor completa todos los campos.");
       return;
@@ -30,10 +31,15 @@ export default function RegisterPage() {
       return;
     }
 
+    if (role === "ESTUDIANTE" && !courseId) {
+      setAuthError("Debes seleccionar un curso para el rol de estudiante.");
+      return;
+    }
+
     try {
       setAuthError("");
       setSuccessMessage("");
-      const data = await register(name, email, password, role, subjectId || undefined);
+      const data = await register(name, email, password, role, subjectId || undefined, courseId || undefined);
 
       if (data.message) {
          setSuccessMessage("¡Registro exitoso! Tu cuenta está pendiente de aprobación por el coordinador. Recibirás una notificación por correo cuando sea revisada.");
