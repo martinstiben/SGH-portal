@@ -9,6 +9,7 @@ import ScheduleGenerateModal from "@/components/schedule/scheduleCourse/Schedule
 import { getAllSchedules, generateSchedule, Schedule } from "@/api/services/scheduleApi";
 import { getAllCourses, Course } from "@/api/services/courseApi";
 import { getUserProfile } from "@/api/services/userApi";
+import { useUserProfile } from "@/hooks/useUserProfile";
 import Cookies from 'js-cookie';
 import { useRouter } from "next/navigation";
 
@@ -88,6 +89,7 @@ const getScheduleForTimeAndDay = (schedules: Schedule[], time: string, day: stri
 };
 
   export default function ScheduleCoursePage() {
+    const { userProfile, isStudent, studentCourseId, studentCourseName } = useUserProfile();
     const [schedules, setSchedules] = useState<Schedule[]>([]);
     const [courses, setCourses] = useState<Course[]>([]);
     const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
@@ -304,29 +306,34 @@ const getScheduleForTimeAndDay = (schedules: Schedule[], time: string, day: stri
                 </div>
                 <div className="ml-3">
                   <p className="text-sm text-blue-700">
-                    <strong>Visualización de Horarios:</strong> Aquí puedes ver los horarios de tus cursos asignados.
+                    <strong>Mi Horario:</strong> Aquí puedes ver el horario de tu curso asignado: <span className="font-semibold">{studentCourseName}</span>
                   </p>
                 </div>
               </div>
             </div>
 
+            {/* Tabla de Horarios - Solo el curso del estudiante */}
             <div className="my-6">
-              <SearchBar placeholder="Buscar cursos por nombre..." onSearch={handleSearch} />
-            </div>
-
-            {/* Tabla de Horarios - Solo lectura para estudiantes */}
-            <div className="my-6">
-              {filteredCourses.map((course) => {
-                const courseSchedules = schedulesByCourse[course.courseId] || [];
+              {studentCourseId && (() => {
+                const course = courses.find(c => c.courseId === studentCourseId);
+                const courseSchedules = schedulesByCourse[studentCourseId] || [];
+                if (!course) {
+                  return (
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                      <h3 className="text-lg font-semibold text-gray-900">Curso no encontrado</h3>
+                      <p className="text-sm text-gray-600">No se pudo encontrar información de tu curso asignado.</p>
+                    </div>
+                  );
+                }
                 return courseSchedules.length > 0 ? (
                   renderScheduleTable(courseSchedules, course.courseName, course.courseId.toString())
                 ) : (
-                  <div key={course.courseId} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                     <h3 className="text-lg font-semibold text-gray-900">{course.courseName}</h3>
-                    <p className="text-sm text-gray-600">No hay horarios asignados para este curso.</p>
+                    <p className="text-sm text-gray-600">No hay horarios asignados para tu curso.</p>
                   </div>
                 );
-              })}
+              })()}
             </div>
           </>
         )}

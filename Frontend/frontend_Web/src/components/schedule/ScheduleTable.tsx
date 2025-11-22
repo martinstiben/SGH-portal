@@ -8,6 +8,7 @@ interface ScheduleTableProps {
   courses: Course[];
   onEdit: (schedule: Schedule) => void;
   onDelete: (schedule: Schedule) => void;
+  readOnly?: boolean;
 }
 
 export default function ScheduleTable({
@@ -16,6 +17,7 @@ export default function ScheduleTable({
   courses,
   onEdit,
   onDelete,
+  readOnly = false,
 }: ScheduleTableProps) {
   const generateTimes = (schedules: Schedule[]) => {
     const timeSet = new Set<string>();
@@ -111,10 +113,10 @@ export default function ScheduleTable({
                         }`}
                       >
                         <div className="relative">
-                          <div className="group-hover:opacity-0 transition-opacity duration-200">
+                          <div className={`${readOnly ? '' : 'group-hover:opacity-0'} transition-opacity duration-200`}>
                             {content}
                           </div>
-                          {schedule && (
+                          {schedule && !readOnly && (
                             <div className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                               <button
                                 onClick={() => onEdit(schedule)}
