@@ -137,7 +137,7 @@ export const updateUserProfile = async (name?: string, email?: string, photo?: F
   }
 };
 
-export const register = async (name: string, email: string, password: string, role: string, subjectId?: number) => {
+export const register = async (name: string, email: string, password: string, role: string, subjectId?: number, courseId?: number) => {
   try {
     const requestBody: any = {
       name,
@@ -148,6 +148,10 @@ export const register = async (name: string, email: string, password: string, ro
 
     if (role === "MAESTRO" && subjectId) {
       requestBody.subjectId = subjectId;
+    }
+
+    if (role === "ESTUDIANTE" && courseId) {
+      requestBody.courseId = courseId;
     }
 
     const response = await fetch(`${API_URL}/register`, {
@@ -166,7 +170,7 @@ export const register = async (name: string, email: string, password: string, ro
     const data = await response.json();
     return data;
   } catch (error: any) {
-    log.error("Error en registro", error, { name, email, role, subjectId });
+    log.error("Error en registro", error, { name, email, role, subjectId, courseId });
     throw error;
   }
 };
