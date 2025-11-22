@@ -15,6 +15,7 @@ import { getScheduleHistory, generateSchedule, ScheduleHistory, Schedule, create
 import { getAllCourses, Course } from "@/api/services/courseApi";
 import { getAllSubjects, Subject } from "@/api/services/subjectApi";
 import { getAllTeachers, Teacher, getTeacherAvailability } from "@/api/services/teacherApi";
+import { useUserProfile } from "@/hooks/useUserProfile";
 import Cookies from 'js-cookie';
 
 const calculateEndTime = (startTime: string): string => {
@@ -58,6 +59,7 @@ const exportSchedule = async (format: 'pdf' | 'excel' | 'image', type: 'course' 
 
 export default function SchedulePage() {
   const router = useRouter();
+  const { userProfile, isStudent, studentCourseId, studentCourseName } = useUserProfile();
   const [history, setHistory] = useState<ScheduleHistory[]>([]);
   const [filteredHistory, setFilteredHistory] = useState<ScheduleHistory[]>([]);
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
@@ -94,8 +96,14 @@ export default function SchedulePage() {
       return;
     }
 
-    loadHistory();
-  }, []);
+    // Si es estudiante, cargar automáticamente su horario de curso
+    if (isStudent && studentCourseId) {
+      loadCourseSchedules(studentCourseId);
+      setSelectedCourse(studentCourseId);
+    } else {
+      loadHistory();
+    }
+  }, [isStudent, studentCourseId]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -445,6 +453,48 @@ export default function SchedulePage() {
   };
 
   const filteredTeachers = selectedSubject ? teachers.filter(t => t.subjectId === selectedSubject) : [];
+
+  // Si es estudiante, mostrar vista simplificada
+  if (isStudent) {
+    return (
+      <>
+        {/* Main content */}
+        <div className="flex-1 p-6">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center">
+              <span className="mr-3">📅</span>
+              Mi Horario de Clases
+            </h1>
+            <p className="text-gray-600 mt-2">
+              Horario del curso: <span className="font-semibold text-blue-600">{studentCourseName}</span>
+            </p>
+          </div>
+
+          {/* Mostrar Horario del Curso del Estudiante */}
+          {studentCourseId && (
+            <div className="my-6">
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-bold text-gray-900 flex items-center">
+                    <span className="mr-2">📋</span>
+                    Horario del Curso
+                  </h2>
+                </div>
+                <ScheduleTable
+                  schedules={courseSchedules}
+                  courseId={studentCourseId}
+                  courses={courses}
+                  onEdit={() => {}} // Deshabilitado para estudiantes
+                  onDelete={() => {}} // Deshabilitado para estudiantes
+                  readOnly={true}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

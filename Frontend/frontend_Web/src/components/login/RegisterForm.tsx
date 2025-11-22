@@ -1,14 +1,15 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Eye, EyeOff, User, Lock, Users, BookOpen } from "lucide-react";
+import { Eye, EyeOff, User, Lock, Users, BookOpen, GraduationCap } from "lucide-react";
 import { getRoles } from "@/api/services/userApi";
 import { getAllSubjects, Subject } from "@/api/services/subjectApi";
+import { getAllCourses, Course } from "@/api/services/courseApi";
 
 interface RegisterFormProps {
-  onBack?: () => void;
-  onSubmit?: (data: { name: string; email: string; password: string; role: string; subjectId?: number | null; acceptTerms: boolean }) => void;
-  authError?: string;
-  successMessage?: string;
+   onBack?: () => void;
+   onSubmit?: (data: { name: string; email: string; password: string; role: string; subjectId?: number | null; courseId?: number | null; acceptTerms: boolean }) => void;
+   authError?: string;
+   successMessage?: string;
 }
 
 export default function RegisterForm({ onBack, onSubmit, authError, successMessage }: RegisterFormProps) {
@@ -20,14 +21,7 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
         const data = await getRoles();
         setRoles(data.roles || []);
       } catch (error) {
-        console.error("Error cargando roles:", error);
-        // Fallback a roles hardcodeados si falla la API
-        setRoles([
-          { value: "COORDINADOR", label: "Coordinador" },
-          { value: "DIRECTOR_DE_AREA", label: "Director de Área" },
-          { value: "MAESTRO", label: "Maestro" },
-          { value: "ESTUDIANTE", label: "Estudiante" },
-        ]);
+        console.error("Error cargando roles:", error);       
       } finally {
         setRolesLoading(false);
       }
@@ -38,6 +32,7 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
 
   const [role, setRole] = useState("");
   const [subjectId, setSubjectId] = useState<number | null>(null);
+  const [courseId, setCourseId] = useState<number | null>(null);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [nameError, setNameError] = useState("");
@@ -45,11 +40,14 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
   const [passwordError, setPasswordError] = useState("");
   const [roleError, setRoleError] = useState("");
   const [subjectError, setSubjectError] = useState("");
+  const [courseError, setCourseError] = useState("");
   const [termsError, setTermsError] = useState("");
   const [roles, setRoles] = useState<{ value: string; label: string }[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [rolesLoading, setRolesLoading] = useState(true);
   const [subjectsLoading, setSubjectsLoading] = useState(false);
+  const [coursesLoading, setCoursesLoading] = useState(false);
 
   useEffect(() => {
     const fetchSubjects = async () => {
@@ -67,6 +65,24 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
     };
 
     fetchSubjects();
+  }, [role]);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      if (role === "ESTUDIANTE") {
+        setCoursesLoading(true);
+        try {
+          const data = await getAllCourses();
+          setCourses(data);
+        } catch (error) {
+          console.error("Error cargando cursos:", error);
+        } finally {
+          setCoursesLoading(false);
+        }
+      }
+    };
+
+    fetchCourses();
   }, [role]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -124,6 +140,11 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
       hasError = true;
     }
 
+    if (role === "ESTUDIANTE" && !courseId) {
+      setCourseError('Debes seleccionar un curso');
+      hasError = true;
+    }
+
     if (!acceptTerms) {
       setTermsError('Debes aceptar los términos y condiciones');
       hasError = true;
@@ -135,7 +156,7 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
 
     try {
       if (onSubmit) {
-        await onSubmit({ name, email, password, role, subjectId, acceptTerms });
+        await onSubmit({ name, email, password, role, subjectId, courseId, acceptTerms });
       }
     } finally {
       setIsLoading(false);
@@ -259,7 +280,11 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
               value={role}
               onChange={(e) => {
                 setRole(e.target.value);
+                setSubjectId(null); // Limpiar materia al cambiar rol
+                setCourseId(null); // Limpiar curso al cambiar rol
                 if (roleError) setRoleError(""); // Limpiar error al seleccionar
+                if (subjectError) setSubjectError(""); // Limpiar error de materia
+                if (courseError) setCourseError(""); // Limpiar error de curso
               }}
               disabled={rolesLoading}
               className={`w-full pl-12 pr-4 py-2.5 sm:py-3 rounded-lg bg-gray-800/70 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all bg-gray-800 ${
@@ -311,6 +336,37 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
             <p className="text-red-400 text-sm mt-1">{subjectError}</p>
           )}
 
+          {/* Curso (solo para estudiantes) */}
+          {role === "ESTUDIANTE" && (
+            <div className="relative">
+              <GraduationCap
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <select
+                value={courseId || ""}
+                onChange={(e) => {
+                  setCourseId(e.target.value ? parseInt(e.target.value) : null);
+                  if (courseError) setCourseError(""); // Limpiar error al seleccionar
+                }}
+                disabled={coursesLoading}
+                className={`w-full pl-12 pr-4 py-2.5 sm:py-3 rounded-lg bg-gray-800/70 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all bg-gray-800 ${courseError ? 'border-red-500 focus:ring-red-500' : 'border-gray-600/50 focus:ring-blue-500'}`}
+              >
+                <option value="" disabled>
+                  {coursesLoading ? "Cargando cursos..." : "Selecciona tu curso"}
+                </option>
+                {courses.map((course) => (
+                  <option key={course.courseId} value={course.courseId} className="bg-gray-800 text-white">
+                    {course.courseName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          {courseError && (
+            <p className="text-red-400 text-sm mt-1">{courseError}</p>
+          )}
+
           {/* Términos y condiciones */}
           <div className="flex items-start space-x-3">
             <input
@@ -341,7 +397,7 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
           {/* Botón Registrarse */}
           <button
             type="submit"
-            disabled={isLoading || !name || !email || !password || !role || !acceptTerms || rolesLoading}
+            disabled={isLoading || !name || !email || !password || !role || (role === "MAESTRO" && !subjectId) || (role === "ESTUDIANTE" && !courseId) || !acceptTerms || rolesLoading}
             className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-2.5 sm:py-3 px-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-[1.01] disabled:scale-100 shadow-lg text-sm sm:text-base"
           >
             {isLoading ? (
