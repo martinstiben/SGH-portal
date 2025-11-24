@@ -1,28 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import HeaderProfessor from "@/components/professors/HeaderProfessor";
 import ProfessorTable from "@/components/professors/ProfessorTable";
 import ProfessorModal from "@/components/professors/ProfessorModal";
-import AvailabilityModal from "@/components/professors/AvailabilityModal";
 import SearchBar from "@/components/dashboard/SearchBar";
-import { getAllTeachers, createTeacher, updateTeacher, deleteTeacher, getTeacherAvailability, Teacher, TeacherAvailability } from "@/api/services/teacherApi";
+import { getAllTeachers, createTeacher, updateTeacher, deleteTeacher, Teacher } from "@/api/services/teacherApi";
 import { getAllSubjects, Subject } from "@/api/services/subjectApi";
 import Cookies from 'js-cookie';
 import { useRouter } from "next/navigation";
 
 interface TeacherWithSubject extends Teacher {
   subjectName?: string;
-  availabilityDays?: string;
 }
 
 export default function ProfessorPage() {
   const [teachers, setTeachers] = useState<TeacherWithSubject[]>([]);
   const [filteredTeachers, setFilteredTeachers] = useState<TeacherWithSubject[]>([]);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAvailabilityModalOpen, setIsAvailabilityModalOpen] = useState(false);
-  const [selectedTeacherForAvailability, setSelectedTeacherForAvailability] = useState<{id: number, name: string} | null>(null);
   const [editingTeacher, setEditingTeacher] = useState<TeacherWithSubject | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -55,34 +51,17 @@ export default function ProfessorPage() {
         getAllSubjects()
       ]);
 
-      // Cargar disponibilidad para cada profesor
-      const teachersWithAvailability = await Promise.all(
-        teachersData.map(async (teacher) => {
-          try {
-            const availability = await getTeacherAvailability(teacher.teacherId);
-            const availabilityDays = availability.length > 0
-              ? availability.map(a => a.day).join(', ')
-              : 'No configurada';
+      // Add subject names to teachers
+      const teachersWithSubject = teachersData.map((teacher) => {
+        const subject = subjectsData.find(s => s.subjectId === teacher.subjectId);
+        return {
+          ...teacher,
+          subjectName: subject?.subjectName
+        };
+      });
 
-            return {
-              ...teacher,
-              subjectName: subjectsData.find(subject => subject.subjectId === teacher.subjectId)?.subjectName,
-              availabilityDays
-            };
-          } catch (error) {
-            console.error(`Error loading availability for teacher ${teacher.teacherId}:`, error);
-            return {
-              ...teacher,
-              subjectName: subjectsData.find(subject => subject.subjectId === teacher.subjectId)?.subjectName,
-              availabilityDays: 'No configurada'
-            };
-          }
-        })
-      );
-
-      setTeachers(teachersWithAvailability);
-      setFilteredTeachers(teachersWithAvailability);
-      setSubjects(subjectsData);
+      setTeachers(teachersWithSubject);
+      setFilteredTeachers(teachersWithSubject);
     } catch (error) {
       console.error("Error fetching data:", error);
       setErrorMessage('Error al cargar los datos');
@@ -130,26 +109,7 @@ export default function ProfessorPage() {
     setEditingTeacher(null);
   };
 
-  const handleOpenAvailabilityModal = (teacher: TeacherWithSubject) => {
-    setSelectedTeacherForAvailability({ id: teacher.teacherId, name: teacher.teacherName });
-    setIsAvailabilityModalOpen(true);
-  };
 
-  const handleCloseAvailabilityModal = () => {
-    setIsAvailabilityModalOpen(false);
-    setSelectedTeacherForAvailability(null);
-  };
-
-  const handleAvailabilityUpdated = (teacherId: number, availabilityDays: string) => {
-    // Actualizar el profesor específico en el estado sin recargar todos los datos
-    setTeachers(prevTeachers =>
-      prevTeachers.map(teacher =>
-        teacher.teacherId === teacherId
-          ? { ...teacher, availabilityDays }
-          : teacher
-      )
-    );
-  };
 
   const handleEditTeacher = (teacher: TeacherWithSubject) => {
     setEditingTeacher(teacher);
@@ -194,36 +154,94 @@ export default function ProfessorPage() {
   return (
     <>
       {/* Main content */}
-      <div className="flex-1 p-6">
-        <HeaderProfessor onAddProfessor={handleAddProfessor} />
-        <div className="my-6">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="flex-1 p-6"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+        >
+          <HeaderProfessor onAddProfessor={handleAddProfessor} />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+          className="my-6"
+        >
           <SearchBar placeholder="Buscar profesores o usuarios por nombre, email, materia o rol..." onSearch={handleSearch} />
-        </div>
-        {errorMessage && (
-          <div className="my-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-            {errorMessage}
-          </div>
-        )}
-        {successMessage && (
-          <div className="my-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-            {successMessage}
-          </div>
-        )}
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.2,
+                delayChildren: 0.6
+              }
+            }
+          }}
+        >
+          {errorMessage && (
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, x: -30, scale: 0.95 },
+                visible: { opacity: 1, x: 0, scale: 1 }
+              }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="my-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded"
+            >
+              {errorMessage}
+            </motion.div>
+          )}
+
+          {successMessage && (
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, x: 30, scale: 0.95 },
+                visible: { opacity: 1, x: 0, scale: 1 }
+              }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="my-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded"
+            >
+              {successMessage}
+            </motion.div>
+          )}
+        </motion.div>
+
         {loading ? (
-          <div className="my-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+            className="my-6 text-center"
+          >
             <p className="text-sm text-gray-600">Cargando profesores y usuarios...</p>
-          </div>
+          </motion.div>
         ) : (
-          <div className="my-6">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.8, ease: "easeOut" }}
+            className="my-6"
+          >
             <ProfessorTable
               teachers={filteredTeachers}
               onEdit={handleEditTeacher}
               onDelete={handleDeleteTeacher}
-              onManageAvailability={handleOpenAvailabilityModal}
             />
-          </div>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
 
       <ProfessorModal
         isOpen={isModalOpen}
@@ -232,15 +250,6 @@ export default function ProfessorPage() {
         teacher={editingTeacher}
       />
 
-      {selectedTeacherForAvailability && (
-        <AvailabilityModal
-          isOpen={isAvailabilityModalOpen}
-          onClose={handleCloseAvailabilityModal}
-          teacherId={selectedTeacherForAvailability.id}
-          teacherName={selectedTeacherForAvailability.name}
-          onAvailabilityUpdated={handleAvailabilityUpdated}
-        />
-      )}
 
       {isConfirmModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

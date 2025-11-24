@@ -11,7 +11,7 @@ export default function HeaderCourse({ onAddCourse }: HeaderCourseProps) {
       </div>
       <button
         onClick={onAddCourse}
-        className="px-5 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-sm"
+        className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-all duration-200 shadow-sm"
       >
         Agregar Curso
       </button>

@@ -5,7 +5,10 @@ import Cookies from 'js-cookie';
  * @returns Headers con Content-Type y Authorization si hay token
  */
 export const getAuthHeaders = (): Record<string, string> => {
-  const token = Cookies.get("token");
+  const token = localStorage.getItem("token") || Cookies.get("token");
+  console.log("getAuthHeaders - Token from localStorage:", localStorage.getItem("token"));
+  console.log("getAuthHeaders - Token from cookies:", Cookies.get("token"));
+  console.log("getAuthHeaders - Using token:", token);
   return {
     "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -17,7 +20,7 @@ export const getAuthHeaders = (): Record<string, string> => {
  * @returns true si hay token, false en caso contrario
  */
 export const isAuthenticated = (): boolean => {
-  return !!Cookies.get("token");
+  return !!(localStorage.getItem("token") || Cookies.get("token"));
 };
 
 /**
@@ -25,7 +28,7 @@ export const isAuthenticated = (): boolean => {
  * @returns El token JWT o null si no existe
  */
 export const getToken = (): string | undefined => {
-  return Cookies.get("token");
+  return localStorage.getItem("token") || Cookies.get("token");
 };
 
 /**

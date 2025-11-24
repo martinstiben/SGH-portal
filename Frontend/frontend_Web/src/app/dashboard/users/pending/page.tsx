@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { CheckCircle, XCircle, Clock, User, Mail, Shield } from "lucide-react";
-import Cookies from 'js-cookie';
+import { getToken } from "@/api/utils/authUtils";
 
 interface PendingUser {
   userId: number;
@@ -25,7 +25,7 @@ export default function PendingUsersPage() {
   const fetchPendingUsers = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("token") || Cookies.get("token");
+      const token = getToken();
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8082'}/auth/pending-users`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -49,7 +49,7 @@ export default function PendingUsersPage() {
   const handleApprove = async (userId: number) => {
     try {
       setProcessingUser(userId);
-      const token = localStorage.getItem("token") || Cookies.get("token");
+      const token = getToken();
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8082'}/auth/approve-user/${userId}`, {
         method: 'POST',
         headers: {
@@ -77,7 +77,7 @@ export default function PendingUsersPage() {
 
     try {
       setProcessingUser(userId);
-      const token = localStorage.getItem("token") || Cookies.get("token");
+      const token = getToken();
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8082'}/auth/reject-user/${userId}`, {
         method: 'POST',
         headers: {

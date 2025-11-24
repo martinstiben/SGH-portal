@@ -22,7 +22,7 @@ export default function TeacherCard({ name, onConfigureAvailability }: TeacherCa
         </div>
         
         {/* Name */}
-        <h2 className="text-base font-semibold text-gray-900 text-center mb-1 group-hover:text-blue-700 transition-colors duration-200">
+        <h2 className="text-base font-semibold text-gray-900 text-center mb-1 group-hover:text-indigo-700 transition-colors duration-200">
           {name}
         </h2>
         
@@ -35,7 +35,7 @@ export default function TeacherCard({ name, onConfigureAvailability }: TeacherCa
         {onConfigureAvailability && (
           <button
             onClick={onConfigureAvailability}
-            className="mt-4 w-full px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md"
+            className="mt-4 w-full px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-all duration-200 shadow-sm hover:shadow-md"
           >
             Configurar Disponibilidad
           </button>
