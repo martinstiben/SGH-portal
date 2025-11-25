@@ -102,8 +102,6 @@ const CourseModal: React.FC<CourseModalProps> = ({ isOpen, onClose, onSave, cour
     }
   };
 
-  if (!isOpen) return null;
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -216,6 +214,7 @@ const CourseModal: React.FC<CourseModalProps> = ({ isOpen, onClose, onSave, cour
           >
             {course ? 'Actualizar' : 'Crear'} Curso
           </button>
+        </div>
           </motion.div>
         </motion.div>
       )}
