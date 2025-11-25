@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { FileText, FileSpreadsheet, Image } from "lucide-react";
 import SearchBar from "@/components/dashboard/SearchBar";
 import HeaderSchedule from "@/components/schedule/scheduleCourse/HeaderSchedule";
@@ -11,6 +12,7 @@ import ScheduleManualForm from "@/components/schedule/ScheduleManualForm";
 import ScheduleEditModal from "@/components/schedule/ScheduleEditModal";
 import ScheduleViewSection from "@/components/schedule/ScheduleViewSection";
 import ScheduleTable from "@/components/schedule/ScheduleTable";
+import GenerateScheduleModal from "@/components/schedule/GenerateScheduleModal";
 import { getScheduleHistory, generateSchedule, ScheduleHistory, Schedule, createSchedule, getSchedulesByCourse, getAllSchedules, updateSchedule, deleteSchedule } from "@/api/services/scheduleApi";
 import { getAllCourses, Course } from "@/api/services/courseApi";
 import { getAllSubjects, Subject } from "@/api/services/subjectApi";
@@ -498,6 +500,13 @@ export default function SchedulePage() {
 
   return (
     <>
+      <GenerateScheduleModal
+        isOpen={isGenerateModalOpen}
+        onClose={handleCloseGenerateModal}
+        onConfirm={handleConfirmGenerate}
+        loading={loading}
+      />
+
       <ScheduleConfirmModal
         isOpen={isConfirmModalOpen}
         scheduleToDelete={scheduleToDelete}
@@ -506,32 +515,74 @@ export default function SchedulePage() {
       />
 
       {/* Main content */}
-      <div className="flex-1 p-6">
-        <HeaderSchedule />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="flex-1 p-6"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+        >
+          <HeaderSchedule onGenerateClick={handleGenerateSchedule} />
+        </motion.div>
 
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.2,
+                delayChildren: 0.4
+              }
+            }
+          }}
+        >
+          {errorMessage && (
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, x: -30, scale: 0.95 },
+                visible: { opacity: 1, x: 0, scale: 1 }
+              }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="my-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+              role="alert"
+            >
+              <span className="block sm:inline">{errorMessage}</span>
+              <button
+                onClick={() => setErrorMessage('')}
+                className="absolute top-0 bottom-0 right-0 px-4 py-3"
+              >
+                <span className="text-red-500">×</span>
+              </button>
+            </motion.div>
+          )}
 
-        {errorMessage && (
-          <div className="my-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-            <span className="block sm:inline">{errorMessage}</span>
-            <button
-              onClick={() => setErrorMessage('')}
-              className="absolute top-0 bottom-0 right-0 px-4 py-3"
+          {successMessage && (
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, x: 30, scale: 0.95 },
+                visible: { opacity: 1, x: 0, scale: 1 }
+              }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="my-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+              role="alert"
             >
-              <span className="text-red-500">×</span>
-            </button>
-          </div>
-        )}
-        {successMessage && (
-          <div className="my-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-            <span className="block sm:inline">{successMessage}</span>
-            <button
-              onClick={() => setSuccessMessage('')}
-              className="absolute top-0 bottom-0 right-0 px-4 py-3"
-            >
-              <span className="text-green-500">×</span>
-            </button>
-          </div>
-        )}
+              <span className="block sm:inline">{successMessage}</span>
+              <button
+                onClick={() => setSuccessMessage('')}
+                className="absolute top-0 bottom-0 right-0 px-4 py-3"
+              >
+                <span className="text-green-500">×</span>
+              </button>
+            </motion.div>
+          )}
+        </motion.div>
 
         {/* Reportes */}
         <div className="my-6">
@@ -749,10 +800,10 @@ export default function SchedulePage() {
               </div>
             </div>
           )}
- 
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
+
+           </div>
+         </div>
+       </motion.div>
+     </>
+   );
+ }

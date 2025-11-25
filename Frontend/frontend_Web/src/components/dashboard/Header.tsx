@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { getUserProfile } from "@/api/services/userApi";
 import { getUnreadCount } from "@/api/services/notificationApi";
 import NotificationButton from "./NotificationButton";
@@ -55,7 +56,12 @@ export default function Header() {
 
   return (
     <>
-      <div className="flex justify-between items-center bg-white p-6 rounded-xl shadow-sm">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="flex justify-between items-center bg-white p-6 rounded-xl shadow-sm"
+      >
         <div>
           <h1 className="text-xl font-semibold text-gray-900">
             Hola {user?.name || "Usuario"} 👋
@@ -75,7 +81,7 @@ export default function Header() {
             unreadCount={unreadNotificationCount}
           />
         </div>
-      </div>
+      </motion.div>
 
       {/* Modal de notificaciones */}
       <NotificationModal

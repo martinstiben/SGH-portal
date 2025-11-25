@@ -14,7 +14,7 @@ const HeroContent: React.FC = React.memo(() => {
       {/* Título */}
       <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-slate-800">
         Sistema de Gestión de Horarios{" "}
-        <span className="text-blue-600">
+        <span className="text-indigo-600">
           Académicos
         </span>
         <br className="hidden sm:block" />
@@ -30,26 +30,26 @@ const HeroContent: React.FC = React.memo(() => {
       {/* Lista de características */}
       <ul className="space-y-4 text-slate-700">
         <li className="flex items-start gap-3">
-          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-            <span className="text-blue-600 text-sm font-bold">✓</span>
+          <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="text-indigo-600 text-sm font-bold">✓</span>
           </div>
           <span className="text-base">Algoritmos de optimización para distribución equitativa de cargas docentes</span>
         </li>
         <li className="flex items-start gap-3">
-          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-            <span className="text-blue-600 text-sm font-bold">✓</span>
+          <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="text-indigo-600 text-sm font-bold">✓</span>
           </div>
           <span className="text-base">Gestión integral de recursos humanos y curriculares</span>
         </li>
         <li className="flex items-start gap-3">
-          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-            <span className="text-blue-600 text-sm font-bold">✓</span>
+          <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="text-indigo-600 text-sm font-bold">✓</span>
           </div>
           <span className="text-base">Dashboard analítico con métricas de rendimiento institucional</span>
         </li>
         <li className="flex items-start gap-3">
-          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-            <span className="text-blue-600 text-sm font-bold">✓</span>
+          <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="text-indigo-600 text-sm font-bold">✓</span>
           </div>
           <span className="text-base">Arquitectura segura con encriptación de datos y autenticación robusta</span>
         </li>

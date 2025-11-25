@@ -56,8 +56,8 @@ const SubjectModal: React.FC<SubjectModalProps> = ({ isOpen, onClose, onSave, su
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <BookOpen className="w-6 h-6 text-blue-600" />
+            <div className="p-2 bg-indigo-100 rounded-lg">
+              <BookOpen className="w-6 h-6 text-indigo-600" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900">
@@ -110,7 +110,7 @@ const SubjectModal: React.FC<SubjectModalProps> = ({ isOpen, onClose, onSave, su
           </button>
           <button
             onClick={handleSave}
-            className="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium"
+            className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium"
           >
             {subject ? 'Actualizar' : 'Crear'} Materia
           </button>

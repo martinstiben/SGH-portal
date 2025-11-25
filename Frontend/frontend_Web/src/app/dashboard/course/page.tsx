@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import HeaderCourse from "@/components/course/HeaderCourse";
 import TableCourse from "@/components/course/TableCourse";
 import CourseModal from "@/components/course/CourseModal";
@@ -181,30 +182,84 @@ export default function CoursePage() {
   return (
     <>
       {/* Main content */}
-      <div className="flex-1 p-6">
-        <HeaderCourse onAddCourse={handleAddCourse} />
-        <div className="my-6">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="flex-1 p-6"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+        >
+          <HeaderCourse onAddCourse={handleAddCourse} />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+          className="my-6"
+        >
           <SearchBar placeholder="Buscar cursos por nombre o director..." onSearch={handleSearch} />
-        </div>
-        {errorMessage && (
-          <div className="my-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-            {errorMessage}
-          </div>
-        )}
-        {successMessage && (
-          <div className="my-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-            {successMessage}
-          </div>
-        )}
-        <div className="my-6">
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.2,
+                delayChildren: 0.6
+              }
+            }
+          }}
+        >
+          {errorMessage && (
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, x: -30, scale: 0.95 },
+                visible: { opacity: 1, x: 0, scale: 1 }
+              }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="my-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded"
+            >
+              {errorMessage}
+            </motion.div>
+          )}
+
+          {successMessage && (
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, x: 30, scale: 0.95 },
+                visible: { opacity: 1, x: 0, scale: 1 }
+              }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="my-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded"
+            >
+              {successMessage}
+            </motion.div>
+          )}
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.8, ease: "easeOut" }}
+          className="my-6"
+        >
           <TableCourse
             courses={filteredCourses}
             onEdit={handleEditCourse}
             onDelete={handleDeleteCourse}
             onViewStudents={handleViewStudents}
           />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       <CourseModal
         isOpen={isModalOpen}

@@ -12,6 +12,7 @@ import {
   ChevronDown,
   ChevronRight,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import Cookies from 'js-cookie';
 import { useAuth } from "@/hooks/useAuth";
@@ -209,7 +210,7 @@ export default function Sidebar() {
                       onClick={() => toggleMenu(item.label)}
                       className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                         openMenu === item.label
-                          ? "bg-blue-50 text-blue-600 shadow-sm"
+                          ? "bg-indigo-50 text-indigo-600 shadow-sm"
                           : "text-gray-600 hover:bg-gray-50"
                       }`}
                     >
@@ -225,26 +226,39 @@ export default function Sidebar() {
                     </button>
 
                     {/* Submenú */}
-                    {openMenu === item.label && (
-                      <ul className="ml-8 mt-2 space-y-1 text-sm">
-                        {item.children.map((sub) => (
-                          <li key={sub.label}>
-                            <button
-                              onClick={() =>
-                                handleNavigation(sub.path, sub.label)
-                              }
-                              className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                                activeItem === sub.label
-                                  ? "bg-blue-100 text-blue-600"
-                                  : "text-gray-600 hover:bg-gray-50"
-                              }`}
+                    <AnimatePresence>
+                      {openMenu === item.label && (
+                        <motion.ul
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
+                          className="ml-8 mt-2 space-y-1 text-sm overflow-hidden"
+                        >
+                          {item.children.map((sub, index) => (
+                            <motion.li
+                              key={sub.label}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: index * 0.1, duration: 0.2 }}
                             >
-                              {sub.label}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                              <button
+                                onClick={() =>
+                                  handleNavigation(sub.path, sub.label)
+                                }
+                                className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                                  activeItem === sub.label
+                                    ? "bg-indigo-100 text-indigo-600"
+                                    : "text-gray-600 hover:bg-gray-50"
+                                }`}
+                              >
+                                {sub.label}
+                              </button>
+                            </motion.li>
+                          ))}
+                        </motion.ul>
+                      )}
+                    </AnimatePresence>
                   </>
                 ) : (
                   // Items normales
@@ -254,7 +268,7 @@ export default function Sidebar() {
                     }
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                       activeItem == item.label
-                        ? "bg-blue-50 text-blue-600 shadow-sm"
+                        ? "bg-indigo-50 text-indigo-600 shadow-sm"
                         : "text-gray-600 hover:bg-gray-50"
                     }`}
                   >
