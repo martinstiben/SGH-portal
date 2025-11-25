@@ -19,7 +19,7 @@ export interface Notification {
   icon?: string;
   isArchived?: boolean;
   expiresAt?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
   readAt?: string;
   priorityDisplayName?: string;
   priorityColor?: string;
@@ -30,18 +30,32 @@ export interface Notification {
   requiresImmediateAttention?: boolean;
 }
 
+export interface NotificationsResponse {
+  notifications: Notification[];
+  totalElements: number;
+  totalPages: number;
+  currentPage: number;
+  size: number;
+}
+
 /**
- * Obtiene todas las notificaciones del usuario actual
+ * Obtiene todas las notificaciones del usuario actual con paginación
  */
-export const getNotifications = async (): Promise<Notification[]> => {
+export const getNotifications = async (page = 0, size = 20): Promise<NotificationsResponse> => {
   try {
     const token = getToken();
     if (!token) {
       console.warn('No hay token de autenticación disponible');
-      return [];
+      return {
+        notifications: [],
+        totalElements: 0,
+        totalPages: 0,
+        currentPage: page,
+        size: size
+      };
     }
 
-    const response = await fetch(`${API_BASE_URL}/notifications`, {
+    const response = await fetch(`${API_BASE_URL}/notifications?page=${page}&size=${size}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -54,15 +68,27 @@ export const getNotifications = async (): Promise<Notification[]> => {
     }
 
     const data = await response.json();
-    // El backend devuelve un objeto con la propiedad 'notifications'
-    const notifications = data.notifications || [];
-    console.log(`Obtenidas ${notifications.length} notificaciones del backend`);
-    return notifications;
+    console.log(`Obtenidas ${data.notifications?.length || 0} notificaciones del backend (página ${page})`);
+    return data;
   } catch (error) {
     console.error('Error obteniendo notificaciones:', error);
-    // En caso de error, devolver array vacío para que el frontend muestre "No tienes notificaciones"
-    return [];
+    // En caso de error, devolver respuesta vacía
+    return {
+      notifications: [],
+      totalElements: 0,
+      totalPages: 0,
+      currentPage: page,
+      size: size
+    };
   }
+};
+
+/**
+ * Obtiene todas las notificaciones sin paginación (para compatibilidad)
+ */
+export const getAllNotifications = async (): Promise<Notification[]> => {
+  const response = await getNotifications(0, 1000); // Obtener muchas para simular "todas"
+  return response.notifications;
 };
 
 /**

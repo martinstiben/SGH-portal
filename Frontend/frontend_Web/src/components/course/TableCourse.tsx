@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, Users } from 'lucide-react';
 
 interface Course {
   courseId: number;
@@ -14,6 +14,7 @@ interface TableCourseProps {
   courses: Course[];
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
+  onViewStudents?: (id: number, name: string) => void;
 }
 
 const gradeMap: { [key: string]: string } = {
@@ -47,13 +48,19 @@ const convertCourseName = (name: string): string => {
   }
 };
 
-const TableCourse = ({ courses, onEdit, onDelete }: TableCourseProps) => {
+const TableCourse = ({ courses, onEdit, onDelete, onViewStudents }: TableCourseProps) => {
   const handleEdit = (id: number) => {
     onEdit(id);
   };
 
   const handleDelete = (id: number) => {
     onDelete(id);
+  };
+
+  const handleViewStudents = (id: number, name: string) => {
+    if (onViewStudents) {
+      onViewStudents(id, name);
+    }
   };
 
   const sortedCourses = [...courses].sort((a, b) => {
@@ -75,16 +82,16 @@ const TableCourse = ({ courses, onEdit, onDelete }: TableCourseProps) => {
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-8 py-6 text-left text-base font-medium text-gray-700 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
                   Nombre
                 </th>
-                <th className="px-8 py-6 text-left text-base font-medium text-gray-700 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
                   Grado
                 </th>
-                <th className="px-8 py-6 text-left text-base font-medium text-gray-700 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
                   Director de curso
                 </th>
-                <th className="px-8 py-6 text-left text-base font-medium text-gray-700 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
                   Acciones
                 </th>
               </tr>
@@ -108,32 +115,40 @@ const TableCourse = ({ courses, onEdit, onDelete }: TableCourseProps) => {
 
                 return (
                   <tr key={course.courseId} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-8 py-6 whitespace-nowrap text-base text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <span className="font-medium">{course.courseName}</span>
                     </td>
-                    <td className="px-8 py-6 whitespace-nowrap">
-                      <span className={`inline-block px-4 py-2 text-sm font-medium rounded-full ${gradeColor}`}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full ${gradeColor}`}>
                         {gradeName}
                       </span>
                     </td>
-                    <td className="px-8 py-6 whitespace-nowrap text-base text-gray-900 font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
                       {course.directorName || <span className="text-gray-500">Sin asignar</span>}
                     </td>
-                    <td className="px-8 py-6 whitespace-nowrap text-base font-medium">
-                      <div className="flex space-x-3">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex flex-wrap gap-2">
+                        {onViewStudents && (
+                          <button
+                            onClick={() => handleViewStudents(course.courseId, course.courseName)}
+                            className="inline-flex items-center px-3 py-1 text-xs font-medium text-green-700 bg-green-50 rounded-md hover:bg-green-100 transition-colors"
+                          >
+                            <Users className="w-3 h-3 mr-1" />
+                            Ver Estudiantes
+                          </button>
+                        )}
                         <button
                           onClick={() => handleEdit(course.courseId)}
-                          className="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
+                          className="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors"
                         >
-                          <Edit className="w-4 h-4 mr-2" />
+                          <Edit className="w-3 h-3 mr-1" />
                           Editar
                         </button>
-                        <span className="text-gray-400 mx-2">|</span>
                         <button
                           onClick={() => handleDelete(course.courseId)}
-                          className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                          className="inline-flex items-center px-3 py-1 text-xs font-medium text-red-700 bg-red-50 rounded-md hover:bg-red-100 transition-colors"
                         >
-                          <Trash2 className="w-4 h-4 mr-2" />
+                          <Trash2 className="w-3 h-3 mr-1" />
                           Eliminar
                         </button>
                       </div>
@@ -146,8 +161,8 @@ const TableCourse = ({ courses, onEdit, onDelete }: TableCourseProps) => {
         </div>
 
       {sortedCourses.length === 0 && (
-        <div className="px-8 py-16 text-center">
-          <p className="text-base text-gray-600">No hay cursos registrados</p>
+        <div className="px-6 py-12 text-center">
+          <p className="text-sm text-gray-600">No hay cursos registrados</p>
         </div>
       )}
     </div>

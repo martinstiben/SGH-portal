@@ -43,8 +43,8 @@ const LogoutModal: React.FC<LogoutModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
-      <div className="bg-white rounded-xl shadow-xl p-6 w-96 mx-4 border border-gray-200">
+    <div className="fixed inset-0 flex items-center justify-center bg-transparent backdrop-blur-md z-50">
+      <div className="bg-white rounded-xl shadow-xl p-6 w-96 mx-4 border border-gray-200 transition-all duration-300 ease-out">
         {!isLoggingOut ? (
           <>
             <h3 className="text-xl font-bold text-gray-900 mb-3">

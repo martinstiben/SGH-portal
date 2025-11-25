@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import HeaderCourse from "@/components/course/HeaderCourse";
 import TableCourse from "@/components/course/TableCourse";
 import CourseModal from "@/components/course/CourseModal";
+import CourseStudentsModal from "@/components/course/CourseStudentsModal";
 import SearchBar from "@/components/dashboard/SearchBar";
 import { getAllCourses, createCourse, updateCourse, deleteCourse, Course } from "@/api/services/courseApi";
 import { getAllTeachers, Teacher } from "@/api/services/teacherApi";
@@ -21,6 +22,8 @@ export default function CoursePage() {
   const [successMessage, setSuccessMessage] = useState('');
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [courseToDelete, setCourseToDelete] = useState<number | null>(null);
+  const [isStudentsModalOpen, setIsStudentsModalOpen] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState<{ id: number; name: string } | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -166,6 +169,16 @@ export default function CoursePage() {
     }
   };
 
+  const handleViewStudents = (courseId: number, courseName: string) => {
+    setSelectedCourse({ id: courseId, name: courseName });
+    setIsStudentsModalOpen(true);
+  };
+
+  const handleCloseStudentsModal = () => {
+    setIsStudentsModalOpen(false);
+    setSelectedCourse(null);
+  };
+
   return (
     <>
       {/* Main content */}
@@ -243,6 +256,7 @@ export default function CoursePage() {
             courses={filteredCourses}
             onEdit={handleEditCourse}
             onDelete={handleDeleteCourse}
+            onViewStudents={handleViewStudents}
           />
         </motion.div>
       </motion.div>
@@ -255,9 +269,16 @@ export default function CoursePage() {
         teachers={teachers}
       />
 
+      <CourseStudentsModal
+        isOpen={isStudentsModalOpen}
+        onClose={handleCloseStudentsModal}
+        courseId={selectedCourse?.id || 0}
+        courseName={selectedCourse?.name || ''}
+      />
+
       {isConfirmModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full mx-4 border border-gray-200">
+        <div className="fixed inset-0 bg-transparent backdrop-blur-md flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full mx-4 border border-gray-200 transition-all duration-300 ease-out">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Confirmar eliminación</h2>
             <p className="text-sm text-gray-600 mb-6">
               ¿Estás seguro de que deseas eliminar el curso "<span className="font-semibold text-gray-900">{courses.find(c => c.courseId === courseToDelete)?.courseName}</span>"? Esta acción no se puede deshacer.

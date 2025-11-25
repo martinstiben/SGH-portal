@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import { getNotifications, markAsRead, Notification } from '@/api/services/notificationApi';
+import { getAllNotifications, markAsRead, Notification } from '@/api/services/notificationApi';
 import { CheckCircle, XCircle, Clock, AlertCircle, Info } from 'lucide-react';
 
 interface NotificationModalProps {
@@ -37,7 +36,7 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
     try {
       setLoading(true);
       setError("");
-      const data = await getNotifications();
+      const data = await getAllNotifications();
       console.log('Notificaciones recibidas del backend:', data);
       console.log('Primera notificación read:', data[0]?.read);
       setNotifications(data);
@@ -102,28 +101,18 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
     return true;
   });
 
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Overlay */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-40"
-            onClick={onClose}
-          />
+  if (!isOpen) return null;
 
-          {/* Modal */}
-          <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="modal-content fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50"
-          >
+  return (
+    <>
+      {/* Overlay */}
+      <div
+        className="modal-backdrop fixed inset-0 bg-transparent backdrop-blur-md z-40 transition-opacity"
+        onClick={onClose}
+      />
+
+      {/* Modal */}
+      <div className="modal-content fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 p-4 z-10">
           <div className="flex items-center justify-between mb-4">
@@ -190,26 +179,10 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
               <p className="text-sm">Todas tus notificaciones aparecerán aquí</p>
             </div>
           ) : (
-            <motion.div
-              className="space-y-2 p-4"
-              initial="hidden"
-              animate="visible"
-              variants={{
-                hidden: {},
-                visible: {
-                  transition: {
-                    staggerChildren: 0.1
-                  }
-                }
-              }}
-            >
+            <div className="space-y-2 p-4">
               {filteredNotifications.map((notification) => (
-                <motion.div
+                <div
                   key={notification.notificationId}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
                   className={`p-4 rounded-lg border transition-all cursor-pointer ${
                     notification.read
                       ? 'bg-gray-50 border-gray-200'
@@ -238,14 +211,12 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
                       </p>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           )}
         </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+      </div>
+    </>
   );
 }
