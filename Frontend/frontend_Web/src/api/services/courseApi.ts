@@ -102,3 +102,32 @@ export const deleteCourse = async (id: number): Promise<void> => {
     throw error;
   }
 };
+
+export interface CourseStudent {
+  userId: number;
+  fullName: string;
+  email: string;
+  roleName: string;
+  accountStatus: string;
+  isVerified: boolean;
+}
+
+export const getCourseStudents = async (courseId: number): Promise<CourseStudent[]> => {
+  try {
+    const response = await fetch(`${COURSE_END_POINTS}/${courseId}/students`, {
+      method: "GET",
+      headers: getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.message || `Error ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    log.error("Error al obtener estudiantes del curso", error, { courseId });
+    throw error;
+  }
+};

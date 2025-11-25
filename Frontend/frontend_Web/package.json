@@ -11,6 +11,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.2.1",
     "axios": "^1.11.0",
     "framer-motion": "^12.23.12",
     "js-cookie": "^3.0.5",

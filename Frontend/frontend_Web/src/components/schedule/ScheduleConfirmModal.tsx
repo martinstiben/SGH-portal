@@ -16,8 +16,8 @@ export default function ScheduleConfirmModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
-      <div className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full mx-4 border border-gray-200">
+    <div className="fixed inset-0 bg-transparent backdrop-blur-md flex items-center justify-center z-[60]">
+      <div className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full mx-4 border border-gray-200 transition-all duration-300 ease-out">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Confirmar eliminación</h2>
         <p className="text-sm text-gray-600 mb-6">
           ¿Estás seguro de que deseas eliminar el horario "<span className="font-semibold text-gray-900">{scheduleToDelete?.scheduleName}</span>"? Esta acción no se puede deshacer.

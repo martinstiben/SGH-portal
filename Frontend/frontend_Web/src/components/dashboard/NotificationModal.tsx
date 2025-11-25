@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getNotifications, markAsRead, Notification } from '@/api/services/notificationApi';
+import { getAllNotifications, markAsRead, Notification } from '@/api/services/notificationApi';
 import { CheckCircle, XCircle, Clock, AlertCircle, Info } from 'lucide-react';
 
 interface NotificationModalProps {
@@ -36,7 +36,7 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
     try {
       setLoading(true);
       setError("");
-      const data = await getNotifications();
+      const data = await getAllNotifications();
       console.log('Notificaciones recibidas del backend:', data);
       console.log('Primera notificación read:', data[0]?.read);
       setNotifications(data);
@@ -107,7 +107,7 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
     <>
       {/* Overlay */}
       <div
-        className="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
+        className="modal-backdrop fixed inset-0 bg-transparent backdrop-blur-md z-40 transition-opacity"
         onClick={onClose}
       />
 

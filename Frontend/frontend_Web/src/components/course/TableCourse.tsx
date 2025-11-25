@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, Users } from 'lucide-react';
 
 interface Course {
   courseId: number;
@@ -14,6 +14,7 @@ interface TableCourseProps {
   courses: Course[];
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
+  onViewStudents?: (id: number, name: string) => void;
 }
 
 const gradeMap: { [key: string]: string } = {
@@ -47,13 +48,19 @@ const convertCourseName = (name: string): string => {
   }
 };
 
-const TableCourse = ({ courses, onEdit, onDelete }: TableCourseProps) => {
+const TableCourse = ({ courses, onEdit, onDelete, onViewStudents }: TableCourseProps) => {
   const handleEdit = (id: number) => {
     onEdit(id);
   };
 
   const handleDelete = (id: number) => {
     onDelete(id);
+  };
+
+  const handleViewStudents = (id: number, name: string) => {
+    if (onViewStudents) {
+      onViewStudents(id, name);
+    }
   };
 
   const sortedCourses = [...courses].sort((a, b) => {
@@ -120,7 +127,16 @@ const TableCourse = ({ courses, onEdit, onDelete }: TableCourseProps) => {
                       {course.directorName || <span className="text-gray-500">Sin asignar</span>}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
+                      <div className="flex flex-wrap gap-2">
+                        {onViewStudents && (
+                          <button
+                            onClick={() => handleViewStudents(course.courseId, course.courseName)}
+                            className="inline-flex items-center px-3 py-1 text-xs font-medium text-green-700 bg-green-50 rounded-md hover:bg-green-100 transition-colors"
+                          >
+                            <Users className="w-3 h-3 mr-1" />
+                            Ver Estudiantes
+                          </button>
+                        )}
                         <button
                           onClick={() => handleEdit(course.courseId)}
                           className="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors"
@@ -128,7 +144,6 @@ const TableCourse = ({ courses, onEdit, onDelete }: TableCourseProps) => {
                           <Edit className="w-3 h-3 mr-1" />
                           Editar
                         </button>
-                        <span className="text-gray-400 mx-1">|</span>
                         <button
                           onClick={() => handleDelete(course.courseId)}
                           className="inline-flex items-center px-3 py-1 text-xs font-medium text-red-700 bg-red-50 rounded-md hover:bg-red-100 transition-colors"
