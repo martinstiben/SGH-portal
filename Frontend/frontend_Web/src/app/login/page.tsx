@@ -66,6 +66,7 @@ export default function LoginPage() {
 
       if (data.token) {
         Cookies.set("token", data.token, { expires: 1 }); // Expira en 1 día
+        localStorage.setItem("token", data.token); // También guardar en localStorage
         setSuccessMessage("¡Bienvenido! Iniciando sesión...");
         setTimeout(() => {
           router.push("/dashboard");

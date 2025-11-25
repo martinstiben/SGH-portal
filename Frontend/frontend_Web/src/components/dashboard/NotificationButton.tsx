@@ -1,5 +1,7 @@
 "use client";
 
+import { motion } from "framer-motion";
+
 interface NotificationButtonProps {
   onClick: () => void;
   unreadCount?: number;
@@ -9,10 +11,12 @@ export default function NotificationButton({ onClick, unreadCount = 0 }: Notific
   const hasUnreadNotifications = unreadCount > 0;
 
   return (
-    <button
+    <motion.button
       onClick={onClick}
       className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
       aria-label={`Notificaciones${hasUnreadNotifications ? ` (${unreadCount} no leídas)` : ''}`}
+      animate={hasUnreadNotifications ? { scale: [1, 1.1, 1] } : {}}
+      transition={{ duration: 0.6, repeat: hasUnreadNotifications ? Infinity : 0, repeatDelay: 2 }}
     >
       {/* Ícono de campanita */}
       <svg
@@ -38,6 +42,6 @@ export default function NotificationButton({ onClick, unreadCount = 0 }: Notific
           {unreadCount > 99 ? '99+' : unreadCount}
         </span>
       )}
-    </button>
+    </motion.button>
   );
 }

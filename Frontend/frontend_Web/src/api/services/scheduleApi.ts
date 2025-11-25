@@ -1,5 +1,5 @@
 import { SCHEDULE_CRUD_END_POINTS, API_BASE_URL } from "../constants/Endpoint";
-import Cookies from 'js-cookie';
+import { getAuthHeaders, getToken } from "../utils/authUtils";
 
 export interface Schedule {
   id: number;
@@ -13,14 +13,6 @@ export interface Schedule {
   teacherName?: string;
   subjectName?: string;
 }
-
-const getAuthHeaders = () => {
-  const token = Cookies.get("token");
-  return {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
 
 export const getAllSchedules = async (): Promise<Schedule[]> => {
   try {
@@ -91,7 +83,7 @@ export const updateSchedule = async (id: number, schedule: Schedule): Promise<vo
   try {
     const headers = getAuthHeaders();
     console.log("Headers being sent:", headers);
-    console.log("Token:", Cookies.get("token"));
+    console.log("Token:", getToken());
     const response = await fetch(`${SCHEDULE_CRUD_END_POINTS}/${id}`, {
       method: "PUT",
       headers: headers,

@@ -30,13 +30,13 @@ const SubjectTable = ({ subjects, onEdit, onDelete }: SubjectTableProps) => {
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-8 py-6 text-left text-base font-medium text-gray-700 uppercase tracking-wider">
                 Nombre
               </th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-8 py-6 text-left text-base font-medium text-gray-700 uppercase tracking-wider">
                 N. Profesores asociados
               </th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-8 py-6 text-left text-base font-medium text-gray-700 uppercase tracking-wider">
                 Acciones
               </th>
             </tr>
@@ -44,29 +44,29 @@ const SubjectTable = ({ subjects, onEdit, onDelete }: SubjectTableProps) => {
             <tbody className="bg-white divide-y divide-gray-200">
               {subjects.map((subject) => (
                 <tr key={subject.subjectId} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-8 py-6 whitespace-nowrap text-base text-gray-900">
                     {subject.subjectName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-block px-3 py-1 text-sm font-medium text-blue-600 bg-blue-100 rounded-full">
+                  <td className="px-8 py-6 whitespace-nowrap">
+                    <span className="inline-block px-4 py-2 text-base font-medium text-indigo-600 bg-indigo-100 rounded-full">
                       {subject.profesoresAsociados || 0}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex space-x-2">
+                  <td className="px-8 py-6 whitespace-nowrap text-base font-medium">
+                    <div className="flex space-x-3">
                       <button
                         onClick={() => handleEdit(subject.subjectId)}
-                        className="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-600 bg-blue-100 rounded hover:bg-blue-200 transition-colors"
+                        className="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
                       >
-                        <Edit className="w-3 h-3 mr-1" />
+                        <Edit className="w-4 h-4 mr-2" />
                         Editar
                       </button>
-                      <span className="text-gray-300">|</span>
+                      <span className="text-gray-400 mx-2">|</span>
                       <button
                         onClick={() => handleDelete(subject.subjectId)}
-                        className="inline-flex items-center px-3 py-1 text-xs font-medium text-red-600 bg-red-100 rounded hover:bg-red-200 transition-colors"
+                        className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
                       >
-                        <Trash2 className="w-3 h-3 mr-1" />
+                        <Trash2 className="w-4 h-4 mr-2" />
                         Eliminar
                       </button>
                     </div>
@@ -78,8 +78,8 @@ const SubjectTable = ({ subjects, onEdit, onDelete }: SubjectTableProps) => {
         </div>
         
       {subjects.length === 0 && (
-        <div className="px-6 py-12 text-center">
-          <p className="text-sm text-gray-600">No hay materias registradas</p>
+        <div className="px-8 py-16 text-center">
+          <p className="text-base text-gray-600">No hay materias registradas</p>
         </div>
       )}
     </div>

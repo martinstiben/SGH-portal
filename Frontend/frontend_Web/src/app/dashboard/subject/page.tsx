@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import HeaderSubject from "@/components/subject/HeaderSubject";
 import SubjectTable from "@/components/subject/SubjectTable";
 import SubjectModal from "@/components/subject/SubjectModal";
@@ -156,30 +157,84 @@ export default function SubjectPage() {
   return (
     <>
       {/* Main content */}
-      <div className="flex-1 p-6">
-        <HeaderSubject onAddSubject={handleAddSubject} />
-        <div className="my-6">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="flex-1 p-6"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+        >
+          <HeaderSubject onAddSubject={handleAddSubject} />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+          className="my-6"
+        >
           <SearchBar placeholder="Buscar materias por nombre..." onSearch={handleSearch} />
-        </div>
-        {errorMessage && (
-          <div className="my-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-            {errorMessage}
-          </div>
-        )}
-        {successMessage && (
-          <div className="my-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-            {successMessage}
-          </div>
-        )}
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.2,
+                delayChildren: 0.6
+              }
+            }
+          }}
+        >
+          {errorMessage && (
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, x: -30, scale: 0.95 },
+                visible: { opacity: 1, x: 0, scale: 1 }
+              }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="my-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded"
+            >
+              {errorMessage}
+            </motion.div>
+          )}
+
+          {successMessage && (
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, x: 30, scale: 0.95 },
+                visible: { opacity: 1, x: 0, scale: 1 }
+              }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="my-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded"
+            >
+              {successMessage}
+            </motion.div>
+          )}
+        </motion.div>
+
         {/* Aquí va el contenido específico de la página de materias */}
-        <div className="my-6">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.8, ease: "easeOut" }}
+          className="my-6"
+        >
           <SubjectTable
             subjects={filteredSubjects}
             onEdit={handleEditSubject}
             onDelete={handleDeleteSubject}
           />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       <SubjectModal
         isOpen={isModalOpen}

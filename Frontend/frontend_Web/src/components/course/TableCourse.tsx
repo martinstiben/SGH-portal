@@ -75,16 +75,16 @@ const TableCourse = ({ courses, onEdit, onDelete }: TableCourseProps) => {
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                <th className="px-8 py-6 text-left text-base font-medium text-gray-700 uppercase tracking-wider">
                   Nombre
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                <th className="px-8 py-6 text-left text-base font-medium text-gray-700 uppercase tracking-wider">
                   Grado
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                <th className="px-8 py-6 text-left text-base font-medium text-gray-700 uppercase tracking-wider">
                   Director de curso
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                <th className="px-8 py-6 text-left text-base font-medium text-gray-700 uppercase tracking-wider">
                   Acciones
                 </th>
               </tr>
@@ -108,32 +108,32 @@ const TableCourse = ({ courses, onEdit, onDelete }: TableCourseProps) => {
 
                 return (
                   <tr key={course.courseId} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-8 py-6 whitespace-nowrap text-base text-gray-900">
                       <span className="font-medium">{course.courseName}</span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full ${gradeColor}`}>
+                    <td className="px-8 py-6 whitespace-nowrap">
+                      <span className={`inline-block px-4 py-2 text-sm font-medium rounded-full ${gradeColor}`}>
                         {gradeName}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                    <td className="px-8 py-6 whitespace-nowrap text-base text-gray-900 font-medium">
                       {course.directorName || <span className="text-gray-500">Sin asignar</span>}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
+                    <td className="px-8 py-6 whitespace-nowrap text-base font-medium">
+                      <div className="flex space-x-3">
                         <button
                           onClick={() => handleEdit(course.courseId)}
-                          className="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors"
+                          className="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
                         >
-                          <Edit className="w-3 h-3 mr-1" />
+                          <Edit className="w-4 h-4 mr-2" />
                           Editar
                         </button>
-                        <span className="text-gray-400 mx-1">|</span>
+                        <span className="text-gray-400 mx-2">|</span>
                         <button
                           onClick={() => handleDelete(course.courseId)}
-                          className="inline-flex items-center px-3 py-1 text-xs font-medium text-red-700 bg-red-50 rounded-md hover:bg-red-100 transition-colors"
+                          className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
                         >
-                          <Trash2 className="w-3 h-3 mr-1" />
+                          <Trash2 className="w-4 h-4 mr-2" />
                           Eliminar
                         </button>
                       </div>
@@ -146,8 +146,8 @@ const TableCourse = ({ courses, onEdit, onDelete }: TableCourseProps) => {
         </div>
 
       {sortedCourses.length === 0 && (
-        <div className="px-6 py-12 text-center">
-          <p className="text-sm text-gray-600">No hay cursos registrados</p>
+        <div className="px-8 py-16 text-center">
+          <p className="text-base text-gray-600">No hay cursos registrados</p>
         </div>
       )}
     </div>
