@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ScheduleModalProps {
   isOpen: boolean;
@@ -13,11 +14,26 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
   onRegenerate,
   courseName,
 }) => {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-transparent backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl p-6 max-w-md w-full border border-gray-200 transition-all duration-300 ease-out">
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-transparent backdrop-blur-md z-50"
+            onClick={onClose}
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="fixed inset-0 flex items-center justify-center z-50 p-4"
+          >
+            <div className="bg-white rounded-xl shadow-xl p-6 max-w-md w-full border border-gray-200 transition-all duration-300 ease-out" onClick={(e) => e.stopPropagation()}>
         <h2 className="text-xl font-bold text-gray-900 mb-4">Horario de {courseName}</h2>
         <p className="text-sm text-gray-600 mb-6">Aquí se mostraría el horario detallado del curso.</p>
         <div className="flex justify-end space-x-3">
@@ -35,8 +51,11 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
           </button>
         </div>
       </div>
-    </div>
-  );
+    </motion.div>
+  </>
+  )}
+</AnimatePresence>
+);
 };
 
 export default ScheduleModal;

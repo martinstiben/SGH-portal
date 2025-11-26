@@ -1,4 +1,5 @@
 import { X, Edit, BookOpen, Calendar, Book, User, Clock } from "lucide-react";
+import { motion, AnimatePresence } from 'framer-motion';
 import { Course } from "@/api/services/courseApi";
 import { Subject } from "@/api/services/subjectApi";
 import { Teacher } from "@/api/services/teacherApi";
@@ -44,8 +45,6 @@ export default function ScheduleEditModal({
   onStartTimeChange,
   onUpdate,
 }: ScheduleEditModalProps) {
-  if (!isOpen) return null;
-
   const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 
   const filteredTeachers = teachers.filter(t => {
@@ -57,8 +56,25 @@ export default function ScheduleEditModal({
   });
 
   return (
-    <div className="fixed inset-0 bg-transparent backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transition-all duration-300 ease-out">
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-transparent backdrop-blur-md z-50"
+            onClick={onClose}
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="fixed inset-0 flex items-center justify-center z-50 p-4"
+          >
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transition-all duration-300 ease-out" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
@@ -211,6 +227,9 @@ export default function ScheduleEditModal({
           </button>
         </div>
       </div>
-    </div>
-  );
+    </motion.div>
+  </>
+  )}
+</AnimatePresence>
+);
 }
