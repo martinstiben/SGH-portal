@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, User, Camera, Upload, Check } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { getUserProfile, getUserPhoto, updateUserProfile } from '@/api/services/userApi';
 
 interface ProfileModalProps {
@@ -169,53 +170,34 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onProfileU
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <>
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Notificación de éxito */}
+          {showSuccessNotification && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50"
+            >
+              <div className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3">
+                <Check className="w-5 h-5" />
+                <span className="font-medium">Perfil actualizado correctamente</span>
+              </div>
+            </motion.div>
+          )}
 
-      <style jsx>{`
-        @keyframes slide-in {
-          from {
-            transform: translateX(100%);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-        .animate-slide-in {
-          animation: slide-in 0.3s ease-out;
-        }
-
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.3s ease-out;
-        }
-      `}</style>
-
-      {/* Notificación de éxito */}
-      {showSuccessNotification && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
-          <div className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3">
-            <Check className="w-5 h-5" />
-            <span className="font-medium">Perfil actualizado correctamente</span>
-          </div>
-        </div>
-      )}
-
-      <div className="fixed top-4 right-4 z-50">
-        <div className="bg-white rounded-2xl shadow-2xl w-80 transform transition-all animate-slide-in border border-gray-200">
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="fixed top-4 right-4 z-50"
+          >
+            <div className="bg-white rounded-2xl shadow-2xl w-80 border border-gray-200">
           {/* Header del Modal */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <div className="flex items-center space-x-3">
@@ -339,9 +321,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onProfileU
           </div>
 
         </div>
-      </div>
-    </>
-  );
+    </motion.div>
+  </>
+  )}
+  </AnimatePresence>
+);
 };
 
 export default ProfileModal;

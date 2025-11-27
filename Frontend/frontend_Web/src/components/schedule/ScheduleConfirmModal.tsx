@@ -1,4 +1,5 @@
 import { Schedule } from "@/api/services/scheduleApi";
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ScheduleConfirmModalProps {
   isOpen: boolean;
@@ -13,11 +14,26 @@ export default function ScheduleConfirmModal({
   onClose,
   onConfirm,
 }: ScheduleConfirmModalProps) {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-transparent backdrop-blur-md flex items-center justify-center z-[60]">
-      <div className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full mx-4 border border-gray-200 transition-all duration-300 ease-out">
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-transparent backdrop-blur-md z-[60]"
+            onClick={onClose}
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="fixed inset-0 flex items-center justify-center z-[60] p-4"
+          >
+            <div className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full mx-4 border border-gray-200 transition-all duration-300 ease-out" onClick={(e) => e.stopPropagation()}>
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Confirmar eliminación</h2>
         <p className="text-sm text-gray-600 mb-6">
           ¿Estás seguro de que deseas eliminar el horario "<span className="font-semibold text-gray-900">{scheduleToDelete?.scheduleName}</span>"? Esta acción no se puede deshacer.
@@ -37,6 +53,9 @@ export default function ScheduleConfirmModal({
           </button>
         </div>
       </div>
-    </div>
-  );
+    </motion.div>
+  </>
+  )}
+</AnimatePresence>
+);
 }

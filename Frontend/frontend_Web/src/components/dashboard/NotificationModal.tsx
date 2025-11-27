@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { getAllNotifications, markAsRead, Notification } from '@/api/services/notificationApi';
 import { CheckCircle, XCircle, Clock, AlertCircle, Info } from 'lucide-react';
 
@@ -104,15 +105,27 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
   if (!isOpen) return null;
 
   return (
-    <>
-      {/* Overlay */}
-      <div
-        className="modal-backdrop fixed inset-0 bg-transparent backdrop-blur-md z-40 transition-opacity"
-        onClick={onClose}
-      />
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Overlay */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="modal-backdrop fixed inset-0 bg-transparent backdrop-blur-md z-40"
+            onClick={onClose}
+          />
 
-      {/* Modal */}
-      <div className="modal-content fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out">
+          {/* Modal */}
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="modal-content fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50"
+          >
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 p-4 z-10">
           <div className="flex items-center justify-between mb-4">
@@ -216,7 +229,9 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
             </div>
           )}
         </div>
-      </div>
-    </>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 }

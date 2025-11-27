@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Users, Mail, Calendar, User } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { getCourseStudents, CourseStudent } from '@/api/services/courseApi';
 
 interface CourseStudentsModalProps {
@@ -50,20 +51,29 @@ const CourseStudentsModal: React.FC<CourseStudentsModalProps> = ({
       day: 'numeric'
     });
   };
+return (
+  <AnimatePresence>
+    {isOpen && (
+      <>
+        {/* Overlay */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 bg-transparent backdrop-blur-md z-40"
+          onClick={onClose}
+        />
 
-  if (!isOpen) return null;
-
-  return (
-    <>
-      {/* Overlay */}
-      <div
-        className="fixed inset-0 bg-transparent backdrop-blur-md z-40 transition-opacity"
-        onClick={onClose}
-      />
-
-      {/* Modal */}
-      <div className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transition-all duration-300 ease-out">
+        {/* Modal */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center p-4"
+        >
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transition-all duration-300 ease-out" onClick={(e) => e.stopPropagation()}>
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
             <div className="flex items-center gap-3">
@@ -173,10 +183,12 @@ const CourseStudentsModal: React.FC<CourseStudentsModalProps> = ({
               Cerrar
             </button>
           </div>
-        </div>
-      </div>
-    </>
-  );
-};
 
+        </div>
+    </motion.div>
+  </>
+  )}
+</AnimatePresence>
+);
+};
 export default CourseStudentsModal;

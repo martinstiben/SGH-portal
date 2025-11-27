@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import HeaderSubject from "@/components/subject/HeaderSubject";
 import SubjectTable from "@/components/subject/SubjectTable";
 import SubjectModal from "@/components/subject/SubjectModal";
@@ -243,30 +243,48 @@ export default function SubjectPage() {
         subject={editingSubject}
       />
 
-      {isConfirmModalOpen && (
-        <div className="fixed inset-0 bg-transparent backdrop-blur-md flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full mx-4 border border-gray-200 transition-all duration-300 ease-out">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Confirmar eliminación</h2>
-            <p className="text-sm text-gray-600 mb-6">
-              ¿Estás seguro de que deseas eliminar la materia "<span className="font-semibold text-gray-900">{subjects.find(s => s.subjectId === subjectToDelete)?.subjectName}</span>"? Esta acción no se puede deshacer.
-            </p>
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => setIsConfirmModalOpen(false)}
-                className="px-5 py-2.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-all duration-200"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="px-5 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-all duration-200"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {isConfirmModalOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-transparent backdrop-blur-md z-50"
+              onClick={() => setIsConfirmModalOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="fixed inset-0 flex items-center justify-center z-50 p-4"
+            >
+              <div className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full mx-4 border border-gray-200 transition-all duration-300 ease-out" onClick={(e) => e.stopPropagation()}>
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">Confirmar eliminación</h2>
+                <p className="text-sm text-gray-600 mb-6">
+                  ¿Estás seguro de que deseas eliminar la materia "<span className="font-semibold text-gray-900">{subjects.find(s => s.subjectId === subjectToDelete)?.subjectName}</span>"? Esta acción no se puede deshacer.
+                </p>
+                <div className="flex justify-end space-x-3">
+                  <button
+                    onClick={() => setIsConfirmModalOpen(false)}
+                    className="px-5 py-2.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-all duration-200"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={confirmDelete}
+                    className="px-5 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-all duration-200"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 }

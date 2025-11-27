@@ -1,5 +1,6 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 /**
  * Props para el componente LogoutModal
@@ -40,42 +41,60 @@ const LogoutModal: React.FC<LogoutModalProps> = ({
   onConfirm,
   isLoggingOut
 }) => {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-transparent backdrop-blur-md z-50">
-      <div className="bg-white rounded-xl shadow-xl p-6 w-96 mx-4 border border-gray-200 transition-all duration-300 ease-out">
-        {!isLoggingOut ? (
-          <>
-            <h3 className="text-xl font-bold text-gray-900 mb-3">
-              Cerrar Sesión
-            </h3>
-            <p className="text-sm text-gray-600 mb-6">
-              ¿Estás seguro de que quieres cerrar la sesión?
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={onClose}
-                className="px-5 py-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium transition-all duration-200"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={onConfirm}
-                className="px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-all duration-200"
-              >
-                Cerrar Sesión
-              </button>
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-transparent backdrop-blur-md z-50"
+            onClick={onClose}
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="fixed inset-0 flex items-center justify-center z-50 p-4"
+          >
+            <div className="bg-white rounded-xl shadow-xl p-6 w-96 mx-4 border border-gray-200 transition-all duration-300 ease-out">
+              {!isLoggingOut ? (
+                <>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">
+                    Cerrar Sesión
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-6">
+                    ¿Estás seguro de que quieres cerrar la sesión?
+                  </p>
+                  <div className="flex justify-end gap-3">
+                    <button
+                      onClick={onClose}
+                      className="px-5 py-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium transition-all duration-200"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={onConfirm}
+                      className="px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-all duration-200"
+                    >
+                      Cerrar Sesión
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center py-6">
+                  <Loader2 className="animate-spin text-red-600 mb-3" size={32} />
+                  <p className="text-gray-900 font-medium text-sm">Cerrando sesión...</p>
+                </div>
+              )}
             </div>
-          </>
-        ) : (
-          <div className="flex flex-col items-center py-6">
-            <Loader2 className="animate-spin text-red-600 mb-3" size={32} />
-            <p className="text-gray-900 font-medium text-sm">Cerrando sesión...</p>
-          </div>
-        )}
-      </div>
-    </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 };
 
