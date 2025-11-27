@@ -29,7 +29,6 @@ export interface TeacherAvailabilityDTO {
 
 const getAuthHeaders = () => {
   const token = Cookies.get("token");
-  console.log("Token en cookies:", token);
   return {
     "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -156,9 +155,7 @@ export const getTeacherAvailability = async (teacherId: number): Promise<Teacher
   try {
     const response = await fetch(`${API_BASE_URL}/availability/by-teacher/${teacherId}`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: getAuthHeaders(),
     });
 
     if (!response.ok) {

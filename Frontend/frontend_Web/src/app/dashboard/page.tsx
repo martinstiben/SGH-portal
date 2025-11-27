@@ -12,12 +12,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserProfile } from "@/hooks/useUserProfile";
 
 export default function DashboardPage() {
-  const [teachers, setTeachers] = useState<{ name: string; stats: { materias: number; cursos: number; horas: number } }[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [userRole, setUserRole] = useState<string>("");
   const [userProfile, setUserProfile] = useState<{ name: string; email: string; role?: string } | null>(null);
   const [showAvailabilityModal, setShowAvailabilityModal] = useState(false);
-  const [currentTeacherId, setCurrentTeacherId] = useState<number | null>(null);
-  const [currentTeacherName, setCurrentTeacherName] = useState<string>("");
+  const [currentTeacher, setCurrentTeacher] = useState<Teacher | null>(null);
   const [studentSchedules, setStudentSchedules] = useState<Schedule[]>([]);
   const { isAuthenticated } = useAuth();
   const { isStudent, studentCourseId, studentCourseName } = useUserProfile();
@@ -62,11 +61,7 @@ export default function DashboardPage() {
         }
 
         // TODO: Obtener stats reales desde la API cuando esté disponible
-        const mappedTeachers = allTeachers.map((teacher) => ({
-          name: teacher.teacherName,
-          stats: { materias: 1, cursos: 1, horas: 25 }, // Temporal: implementar API de stats
-        }));
-        setTeachers(mappedTeachers);
+        setTeachers(allTeachers);
       } catch (error) {
         console.error("Error fetching teachers:", error);
       }
@@ -90,22 +85,16 @@ export default function DashboardPage() {
     fetchStudentSchedules();
   }, [isAuthenticated, isStudent, studentCourseId]);
 
-  const handleOpenAvailabilityModal = (teacherId: number, teacherName: string) => {
-    setCurrentTeacherId(teacherId);
-    setCurrentTeacherName(teacherName);
+  const handleOpenAvailabilityModal = (teacher: Teacher) => {
+    setCurrentTeacher(teacher);
     setShowAvailabilityModal(true);
   };
 
   const handleCloseAvailabilityModal = () => {
     setShowAvailabilityModal(false);
-    setCurrentTeacherId(null);
-    setCurrentTeacherName("");
+    setCurrentTeacher(null);
   };
 
-  const handleAvailabilityUpdated = (teacherId: number, availabilityDays: string) => {
-    // Update teacher availability in the list if needed
-    console.log(`Updated availability for teacher ${teacherId}: ${availabilityDays}`);
-  };
 
   const generateTimes = (schedules: Schedule[]) => {
     const timeSet = new Set<string>();
@@ -310,11 +299,8 @@ export default function DashboardPage() {
                   transition={{ duration: 0.5, delay: i * 0.1, ease: "easeOut" }}
                 >
                   <TeacherCard
-                    name={t.name}
-                    onConfigureAvailability={() => handleOpenAvailabilityModal(
-                      t.name === userProfile?.name ? -1 : i + 1,
-                      t.name
-                    )}
+                    name={t.teacherName}
+                    onConfigureAvailability={() => handleOpenAvailabilityModal(t)}
                   />
                 </motion.div>
               ))}
@@ -376,7 +362,7 @@ export default function DashboardPage() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: i * 0.1, ease: "easeOut" }}
                 >
-                  <TeacherCard name={t.name} />
+                  <TeacherCard name={t.teacherName} />
                 </motion.div>
               ))}
             </motion.div>
@@ -418,13 +404,11 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Availability Modal for Teachers */}
-      {showAvailabilityModal && currentTeacherId && (
+      {showAvailabilityModal && currentTeacher && (
         <AvailabilityModal
           isOpen={showAvailabilityModal}
           onClose={handleCloseAvailabilityModal}
-          teacherId={currentTeacherId}
-          teacherName={currentTeacherName}
-          onAvailabilityUpdated={handleAvailabilityUpdated}
+          teacher={currentTeacher}
         />
       )}
     </>

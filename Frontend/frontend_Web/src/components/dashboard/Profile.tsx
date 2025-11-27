@@ -101,11 +101,11 @@ export default function ProfileCard() {
           </div>
 
           {/* Nombre y rol */}
-          <h3 className="mt-3 font-semibold text-gray-900 flex items-center gap-1.5">
-            {userName}
-            <span className="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
+          <h3 className="mt-3 font-semibold text-gray-900 flex items-center gap-1.5 text-sm leading-tight">
+            <span className="truncate">{userName}</span>
+            <span className="w-2.5 h-2.5 bg-green-500 rounded-full flex-shrink-0"></span>
           </h3>
-          <p className="text-xs text-gray-600 mt-0.5">{userRole}</p>
+          <p className="text-xs text-gray-600 mt-0.5 truncate">{userRole}</p>
         </div>
       </div>
 
