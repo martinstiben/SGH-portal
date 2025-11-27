@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import HeaderProfessor from "@/components/professors/HeaderProfessor";
 import ProfessorTable from "@/components/professors/ProfessorTable";
 import ProfessorModal from "@/components/professors/ProfessorModal";
+import AvailabilityModal from "@/components/professors/AvailabilityModal";
 import SearchBar from "@/components/dashboard/SearchBar";
 import { getAllTeachers, createTeacher, updateTeacher, deleteTeacher, Teacher } from "@/api/services/teacherApi";
 import { getAllSubjects, Subject } from "@/api/services/subjectApi";
@@ -13,6 +14,7 @@ import { useRouter } from "next/navigation";
 
 interface TeacherWithSubject extends Teacher {
   subjectName?: string;
+  availabilitySummary?: string;
 }
 
 export default function ProfessorPage() {
@@ -24,6 +26,8 @@ export default function ProfessorPage() {
   const [successMessage, setSuccessMessage] = useState('');
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [teacherToDelete, setTeacherToDelete] = useState<number | null>(null);
+  const [isAvailabilityModalOpen, setIsAvailabilityModalOpen] = useState(false);
+  const [selectedTeacherForAvailability, setSelectedTeacherForAvailability] = useState<TeacherWithSubject | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -56,7 +60,8 @@ export default function ProfessorPage() {
         const subject = subjectsData.find(s => s.subjectId === teacher.subjectId);
         return {
           ...teacher,
-          subjectName: subject?.subjectName
+          subjectName: subject?.subjectName,
+          availabilitySummary: teacher.availabilitySummary
         };
       });
 
@@ -109,7 +114,15 @@ export default function ProfessorPage() {
     setEditingTeacher(null);
   };
 
+  const handleViewAvailability = (teacher: TeacherWithSubject) => {
+    setSelectedTeacherForAvailability(teacher);
+    setIsAvailabilityModalOpen(true);
+  };
 
+  const handleCloseAvailabilityModal = () => {
+    setIsAvailabilityModalOpen(false);
+    setSelectedTeacherForAvailability(null);
+  };
 
   const handleEditTeacher = (teacher: TeacherWithSubject) => {
     setEditingTeacher(teacher);
@@ -174,7 +187,7 @@ export default function ProfessorPage() {
           transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
           className="my-6"
         >
-          <SearchBar placeholder="Buscar profesores o usuarios por nombre, email, materia o rol..." onSearch={handleSearch} />
+          <SearchBar placeholder="Buscar profesores por nombre, materia o especialidad..." onSearch={handleSearch} />
         </motion.div>
 
         <motion.div
@@ -218,31 +231,22 @@ export default function ProfessorPage() {
           )}
         </motion.div>
 
-        {loading ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
-            className="my-6 text-center"
-          >
-            <p className="text-sm text-gray-600">Cargando profesores y usuarios...</p>
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.8, ease: "easeOut" }}
-            className="my-6"
-          >
-            <ProfessorTable
-              teachers={filteredTeachers}
-              onEdit={handleEditTeacher}
-              onDelete={handleDeleteTeacher}
-            />
-          </motion.div>
-        )}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.8, ease: "easeOut" }}
+          className="my-6"
+        >
+          <ProfessorTable
+            teachers={filteredTeachers}
+            onEdit={handleEditTeacher}
+            onDelete={handleDeleteTeacher}
+            onViewAvailability={handleViewAvailability}
+          />
+        </motion.div>
       </motion.div>
 
+      {/* Modals */}
       <ProfessorModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
@@ -250,7 +254,13 @@ export default function ProfessorPage() {
         teacher={editingTeacher}
       />
 
+      <AvailabilityModal
+        isOpen={isAvailabilityModalOpen}
+        onClose={handleCloseAvailabilityModal}
+        teacher={selectedTeacherForAvailability}
+      />
 
+      {/* Delete Confirmation Modal */}
       <AnimatePresence>
         {isConfirmModalOpen && (
           <>
@@ -259,7 +269,7 @@ export default function ProfessorPage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-transparent backdrop-blur-md z-50"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
               onClick={() => setIsConfirmModalOpen(false)}
             />
             <motion.div
@@ -269,24 +279,32 @@ export default function ProfessorPage() {
               transition={{ duration: 0.3, ease: "easeOut" }}
               className="fixed inset-0 flex items-center justify-center z-50 p-4"
             >
-              <div className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full mx-4 border border-gray-200 transition-all duration-300 ease-out" onClick={(e) => e.stopPropagation()}>
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Confirmar eliminación</h2>
-                <p className="text-sm text-gray-600 mb-6">
-                  ¿Estás seguro de que deseas eliminar el profesor "<span className="font-semibold text-gray-900">{teachers.find(t => t.teacherId === teacherToDelete)?.teacherName}</span>"? Esta acción no se puede deshacer.
-                </p>
-                <div className="flex justify-end space-x-3">
-                  <button
-                    onClick={() => setIsConfirmModalOpen(false)}
-                    className="px-5 py-2.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-all duration-200"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    onClick={confirmDelete}
-                    className="px-5 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-all duration-200"
-                  >
-                    Eliminar
-                  </button>
+              <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 border border-gray-200" onClick={(e) => e.stopPropagation()}>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Eliminar Profesor</h2>
+                  <p className="text-gray-600 mb-8 leading-relaxed">
+                    ¿Estás seguro de que deseas eliminar al profesor <span className="font-semibold text-gray-900">"{teachers.find(t => t.teacherId === teacherToDelete)?.teacherName}"</span>?
+                    Esta acción no se puede deshacer.
+                  </p>
+                  <div className="flex justify-center space-x-4">
+                    <button
+                      onClick={() => setIsConfirmModalOpen(false)}
+                      className="px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-all duration-200"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={confirmDelete}
+                      className="px-6 py-3 bg-red-600 text-white font-medium rounded-xl hover:bg-red-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
                 </div>
               </div>
             </motion.div>

@@ -6,9 +6,6 @@ import Cookies from 'js-cookie';
  */
 export const getAuthHeaders = (): Record<string, string> => {
   const token = localStorage.getItem("token") || Cookies.get("token");
-  console.log("getAuthHeaders - Token from localStorage:", localStorage.getItem("token"));
-  console.log("getAuthHeaders - Token from cookies:", Cookies.get("token"));
-  console.log("getAuthHeaders - Using token:", token);
   return {
     "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),

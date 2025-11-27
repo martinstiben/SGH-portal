@@ -18,9 +18,7 @@ export const getAllSchedules = async (): Promise<Schedule[]> => {
   try {
     const response = await fetch(SCHEDULE_CRUD_END_POINTS, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -166,9 +164,7 @@ export const getScheduleHistory = async (page: number = 0, size: number = 10): P
   try {
     const response = await fetch(`${API_BASE_URL}/schedules/history?page=${page}&size=${size}`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: getAuthHeaders(),
     });
 
     if (!response.ok) {
