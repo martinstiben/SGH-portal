@@ -74,19 +74,6 @@ describe('Sidebar Component', () => {
     expect(screen.getByText('Horarios Profesores')).toBeInTheDocument();
   });
 
-  test('navigates to submenu item when clicked', () => {
-    render(<Sidebar />);
-
-    // First open the submenu
-    const horariosButton = screen.getByText('Horarios');
-    fireEvent.click(horariosButton);
-
-    // Then click on a submenu item
-    const generateScheduleButton = screen.getByText('Generar Horario');
-    fireEvent.click(generateScheduleButton);
-
-    expect(mockPush).toHaveBeenCalledWith('/dashboard/schedule');
-  });
 
   test('shows logout confirmation modal when logout button is clicked', () => {
     render(<Sidebar />);
@@ -99,6 +86,20 @@ describe('Sidebar Component', () => {
     expect(screen.getByText('¿Estás seguro de que quieres cerrar la sesión?')).toBeInTheDocument();
     expect(screen.getByText('Cancelar')).toBeInTheDocument();
     expect(screen.getByText('Aceptar')).toBeInTheDocument();
+  });
+
+  test('navigates to submenu item when clicked', () => {
+    render(<Sidebar />);
+
+    // First open the submenu
+    const horariosButton = screen.getByText('Horarios');
+    fireEvent.click(horariosButton);
+
+    // Then click on a submenu item
+    const generateScheduleButton = screen.getByText('Generar Horario');
+    fireEvent.click(generateScheduleButton);
+
+    expect(mockPush).toHaveBeenCalledWith('/dashboard/schedule');
   });
 
   test('closes modal when cancel is clicked', () => {

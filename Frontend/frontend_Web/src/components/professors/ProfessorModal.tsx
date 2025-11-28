@@ -151,7 +151,7 @@ export default function ProfessorModal({ isOpen, onClose, onSave, teacher }: Pro
                         type="text"
                         value={formData.teacherName}
                         onChange={(e) => handleInputChange('teacherName', e.target.value)}
-                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 ${
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 text-gray-900 ${
                           errors.teacherName ? 'border-red-300 bg-red-50' : 'border-gray-300'
                         }`}
                         placeholder="Ingrese el nombre completo"
@@ -188,7 +188,7 @@ export default function ProfessorModal({ isOpen, onClose, onSave, teacher }: Pro
                       <select
                         value={formData.subjectId}
                         onChange={(e) => handleInputChange('subjectId', parseInt(e.target.value))}
-                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 ${
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 text-gray-900 appearance-none ${
                           errors.subjectId ? 'border-red-300 bg-red-50' : 'border-gray-300'
                         }`}
                       >

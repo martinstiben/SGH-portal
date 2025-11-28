@@ -5,8 +5,7 @@ import { FileText, FileSpreadsheet, Image } from "lucide-react";
 import SearchBar from "@/components/dashboard/SearchBar";
 import HeaderSchedule from "@/components/schedule/scheduleCourse/HeaderSchedule";
 import ScheduleModal from "@/components/schedule/scheduleCourse/ScheduleModal";
-import ScheduleGenerateModal from "@/components/schedule/scheduleCourse/ScheduleGenerateModal";
-import { getAllSchedules, generateSchedule, Schedule } from "@/api/services/scheduleApi";
+import { getAllSchedules, Schedule } from "@/api/services/scheduleApi";
 import { getAllCourses, Course } from "@/api/services/courseApi";
 import { getUserProfile } from "@/api/services/userApi";
 import { useUserProfile } from "@/hooks/useUserProfile";
@@ -94,9 +93,7 @@ const getScheduleForTimeAndDay = (schedules: Schedule[], time: string, day: stri
     const [courses, setCourses] = useState<Course[]>([]);
     const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-    const [isGenerating, setIsGenerating] = useState(false);
     const [userRole, setUserRole] = useState<string>("");
     const router = useRouter();
 
@@ -153,44 +150,9 @@ const getScheduleForTimeAndDay = (schedules: Schedule[], time: string, day: stri
     }
   };
 
-  const handleGenerateSchedule = () => {
-    setIsGenerateModalOpen(true);
-  };
-
-  const handleConfirmGenerate = async (params: {
-    periodStart: string;
-    periodEnd: string;
-    dryRun: boolean;
-    force: boolean;
-    params?: string;
-  }) => {
-    setIsGenerating(true);
-    try {
-      const result = await generateSchedule(params);
-      alert(`Horario generado exitosamente. ${result.message || ''}`);
-      // Refrescar los datos
-      const [schedulesData, coursesData] = await Promise.all([
-        getAllSchedules(),
-        getAllCourses()
-      ]);
-      setSchedules(schedulesData);
-      setCourses(coursesData);
-    } catch (error: any) {
-      console.error('Error generando horario:', error);
-      alert(`Error al generar horario: ${error.message || 'Error desconocido'}`);
-    } finally {
-      setIsGenerating(false);
-      setIsGenerateModalOpen(false);
-    }
-  };
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedCourse(null);
-  };
-
-  const handleCloseGenerateModal = () => {
-    setIsGenerateModalOpen(false);
   };
 
   const handleSearch = (query: string) => {
@@ -365,15 +327,7 @@ const getScheduleForTimeAndDay = (schedules: Schedule[], time: string, day: stri
       <ScheduleModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        onRegenerate={handleGenerateSchedule}
         courseName={selectedCourse?.courseName || ''}
-      />
-
-      <ScheduleGenerateModal
-        isOpen={isGenerateModalOpen}
-        onClose={handleCloseGenerateModal}
-        onGenerate={handleConfirmGenerate}
-        isGenerating={isGenerating}
       />
     </>
   );
