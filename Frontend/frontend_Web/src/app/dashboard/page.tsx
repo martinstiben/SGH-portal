@@ -7,7 +7,7 @@ import TeacherCard from "@/components/dashboard/TeacherCard";
 import AvailabilityModal from "@/components/professors/AvailabilityModal";
 import { getAllTeachers, Teacher } from "@/api/services/teacherApi";
 import { getUserProfile } from "@/api/services/userApi";
-import { getSchedulesByCourse, Schedule } from "@/api/services/scheduleApi";
+import { getSchedulesByCourse, getAllSchedules, Schedule } from "@/api/services/scheduleApi";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserProfile } from "@/hooks/useUserProfile";
 
@@ -18,6 +18,7 @@ export default function DashboardPage() {
   const [showAvailabilityModal, setShowAvailabilityModal] = useState(false);
   const [currentTeacher, setCurrentTeacher] = useState<Teacher | null>(null);
   const [studentSchedules, setStudentSchedules] = useState<Schedule[]>([]);
+  const [teacherSchedules, setTeacherSchedules] = useState<Schedule[]>([]);
   const { isAuthenticated } = useAuth();
   const { isStudent, studentCourseId, studentCourseName } = useUserProfile();
 
@@ -84,6 +85,22 @@ export default function DashboardPage() {
 
     fetchStudentSchedules();
   }, [isAuthenticated, isStudent, studentCourseId]);
+
+  useEffect(() => {
+    if (!isAuthenticated || userRole !== "MAESTRO" || !userProfile) return;
+
+    const fetchTeacherSchedules = async () => {
+      try {
+        const allSchedules = await getAllSchedules();
+        const teacherSchedules = allSchedules.filter(schedule => schedule.teacherName === userProfile.name);
+        setTeacherSchedules(teacherSchedules);
+      } catch (error) {
+        console.error("Error fetching teacher schedules:", error);
+      }
+    };
+
+    fetchTeacherSchedules();
+  }, [isAuthenticated, userRole, userProfile]);
 
   const handleOpenAvailabilityModal = (teacher: Teacher) => {
     setCurrentTeacher(teacher);
@@ -225,6 +242,92 @@ export default function DashboardPage() {
     );
   };
 
+  const renderTeacherScheduleTable = () => {
+    const times = generateTimes(teacherSchedules);
+    const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+      >
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="p-4 bg-gray-50 border-b border-gray-200"
+        >
+          <h3 className="text-lg font-semibold text-gray-900">Mi Horario</h3>
+        </motion.div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-100 border-b border-gray-200">
+              <tr>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider min-w-32">
+                  Tiempo
+                </th>
+                {days.map((day, index) => (
+                  <motion.th
+                    key={day}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
+                    className="px-6 py-4 text-center text-sm font-medium text-gray-700 uppercase tracking-wider min-w-36"
+                  >
+                    {day}
+                  </motion.th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {times.map((time, index) => (
+                <motion.tr
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
+                  className="hover:bg-gray-50 transition-colors"
+                >
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {time}
+                  </td>
+                  {days.map((day) => {
+                    const schedule = getScheduleForTimeAndDay(teacherSchedules, time, day);
+                    const isLunchTime = time === "12:00 PM - 1:00 PM";
+                    const isBreak = time === "9:00 AM - 9:30 AM";
+                    const content = schedule ? `${schedule.subjectName || 'Materia'}` : isLunchTime ? "Almuerzo" : isBreak ? "Descanso" : "";
+
+                    return (
+                      <motion.td
+                        key={day}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.4, delay: 0.7 + index * 0.05 }}
+                        className={`px-6 py-4 text-center text-sm ${
+                          isLunchTime
+                            ? 'bg-orange-100 text-orange-800 font-medium'
+                            : isBreak
+                              ? 'bg-yellow-100 text-yellow-800 font-medium'
+                              : content && schedule
+                                ? 'bg-green-100 text-green-800 font-medium'
+                                : 'text-gray-400'
+                        }`}
+                      >
+                        {content}
+                      </motion.td>
+                    );
+                  })}
+                </motion.tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </motion.div>
+    );
+  };
+
   return (
     <>
       {/* Main content */}
@@ -276,34 +379,60 @@ export default function DashboardPage() {
                 <div className="ml-3">
                   <p className="text-sm text-yellow-700">
                     <strong>Importante:</strong> Debe configurar su disponibilidad horaria antes de continuar usando el sistema.
-                    Haga clic en "Configurar Disponibilidad" en cualquier profesor para comenzar.
+                    Use el botón "Configurar Mi Disponibilidad" abajo o vaya a la sección de Profesores.
                   </p>
                 </div>
               </div>
             </motion.div>
 
-            {/* Cards Profesores */}
+            {/* Horario del Maestro */}
             <motion.div
               variants={{
                 hidden: { opacity: 0, y: 40 },
                 visible: { opacity: 1, y: 0 }
               }}
               transition={{ duration: 0.7, ease: "easeOut" }}
-              className="grid grid-cols-1 md:grid-cols-4 gap-4 my-6"
+              className="my-6"
             >
-              {teachers.map((t, i) => (
+              {teacherSchedules.length > 0 ? (
+                renderTeacherScheduleTable()
+              ) : (
                 <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: i * 0.1, ease: "easeOut" }}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.8 }}
+                  className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
                 >
-                  <TeacherCard
-                    name={t.teacherName}
-                    onConfigureAvailability={() => handleOpenAvailabilityModal(t)}
-                  />
+                  <h2 className="text-xl font-semibold text-gray-900 mb-4">Mi Horario</h2>
+                  <p className="text-sm text-gray-600">No hay horarios asignados actualmente.</p>
                 </motion.div>
-              ))}
+              )}
+
+              {/* Acceso directo para configurar disponibilidad */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 1.0 }}
+                className="bg-blue-50 p-4 rounded-xl border border-blue-200 my-6"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-blue-900">Configurar Mi Disponibilidad</h3>
+                    <p className="text-sm text-blue-700 mt-1">Establece tus horarios disponibles para que el sistema pueda asignarte clases.</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const currentTeacher = teachers.find(t => t.teacherName === userProfile?.name);
+                      if (currentTeacher) {
+                        handleOpenAvailabilityModal(currentTeacher);
+                      }
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-sm"
+                  >
+                    📅 Configurar
+                  </button>
+                </div>
+              </motion.div>
             </motion.div>
           </motion.div>
         )}
