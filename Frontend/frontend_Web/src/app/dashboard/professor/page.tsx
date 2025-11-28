@@ -6,6 +6,7 @@ import HeaderProfessor from "@/components/professors/HeaderProfessor";
 import ProfessorTable from "@/components/professors/ProfessorTable";
 import ProfessorModal from "@/components/professors/ProfessorModal";
 import AvailabilityModal from "@/components/professors/AvailabilityModal";
+import ViewAvailabilityModal from "@/components/professors/ViewAvailabilityModal";
 import SearchBar from "@/components/dashboard/SearchBar";
 import { getAllTeachers, createTeacher, updateTeacher, deleteTeacher, Teacher } from "@/api/services/teacherApi";
 import { getAllSubjects, Subject } from "@/api/services/subjectApi";
@@ -274,11 +275,43 @@ export default function ProfessorPage() {
         teacher={editingTeacher}
       />
 
-      <AvailabilityModal
-        isOpen={isAvailabilityModalOpen}
-        onClose={handleCloseAvailabilityModal}
-        teacher={selectedTeacherForAvailability}
-      />
+      <AnimatePresence>
+        {isAvailabilityModalOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 backdrop-blur-md z-40"
+              onClick={handleCloseAvailabilityModal}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="fixed inset-0 flex items-center justify-center z-50 p-4"
+            >
+              {userRole === "MAESTRO" ? (
+                <AvailabilityModal
+                  isOpen={isAvailabilityModalOpen}
+                  onClose={handleCloseAvailabilityModal}
+                  teacherId={selectedTeacherForAvailability?.teacherId || 0}
+                  teacherName={selectedTeacherForAvailability?.teacherName || ''}
+                />
+              ) : (
+                <ViewAvailabilityModal
+                  isOpen={isAvailabilityModalOpen}
+                  onClose={handleCloseAvailabilityModal}
+                  teacherId={selectedTeacherForAvailability?.teacherId || 0}
+                  teacherName={selectedTeacherForAvailability?.teacherName || ''}
+                />
+              )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Delete Confirmation Modal */}
       <AnimatePresence>

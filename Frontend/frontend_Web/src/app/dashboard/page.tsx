@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/dashboard/Header";
 import TeacherCard from "@/components/dashboard/TeacherCard";
 import AvailabilityModal from "@/components/professors/AvailabilityModal";
@@ -311,7 +311,7 @@ export default function DashboardPage() {
                             : isBreak
                               ? 'bg-yellow-100 text-yellow-800 font-medium'
                               : content && schedule
-                                ? 'bg-green-100 text-green-800 font-medium'
+                                ? 'bg-blue-100 text-blue-800 font-medium'
                                 : 'text-gray-400'
                         }`}
                       >
@@ -361,30 +361,6 @@ export default function DashboardPage() {
               }
             }}
           >
-            {/* Mandatory Availability Notice */}
-            <motion.div
-              variants={{
-                hidden: { opacity: 0, y: 30, scale: 0.95 },
-                visible: { opacity: 1, y: 0, scale: 1 }
-              }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              className="bg-yellow-50 border-l-4 border-yellow-400 p-4 my-6"
-            >
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm text-yellow-700">
-                    <strong>Importante:</strong> Debe configurar su disponibilidad horaria antes de continuar usando el sistema.
-                    Use el botón "Configurar Mi Disponibilidad" abajo o vaya a la sección de Profesores.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-
             {/* Horario del Maestro */}
             <motion.div
               variants={{
@@ -533,13 +509,34 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Availability Modal for Teachers */}
-      {showAvailabilityModal && currentTeacher && (
-        <AvailabilityModal
-          isOpen={showAvailabilityModal}
-          onClose={handleCloseAvailabilityModal}
-          teacher={currentTeacher}
-        />
-      )}
+      <AnimatePresence>
+        {showAvailabilityModal && currentTeacher && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 backdrop-blur-md z-40"
+              onClick={handleCloseAvailabilityModal}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="fixed inset-0 flex items-center justify-center z-50 p-4"
+            >
+              <AvailabilityModal
+                isOpen={showAvailabilityModal}
+                onClose={handleCloseAvailabilityModal}
+                teacherId={currentTeacher.teacherId}
+                teacherName={currentTeacher.teacherName}
+              />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 }
