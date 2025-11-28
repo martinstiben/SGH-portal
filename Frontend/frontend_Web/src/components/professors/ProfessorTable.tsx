@@ -16,9 +16,11 @@ interface ProfessorTableProps {
   onEdit: (teacher: Teacher) => void;
   onDelete: (id: number) => void;
   onViewAvailability: (teacher: Teacher) => void;
+  canEdit?: boolean;
+  canDelete?: boolean;
 }
 
-const ProfessorTable = ({ teachers, onEdit, onDelete, onViewAvailability }: ProfessorTableProps) => {
+const ProfessorTable = ({ teachers, onEdit, onDelete, onViewAvailability, canEdit = true, canDelete = true }: ProfessorTableProps) => {
   const handleEdit = (teacher: Teacher) => {
     onEdit(teacher);
   };
@@ -46,9 +48,11 @@ const ProfessorTable = ({ teachers, onEdit, onDelete, onViewAvailability }: Prof
               <th className="px-8 py-6 text-left text-base font-medium text-gray-700 uppercase tracking-wider">
                 Disponibilidad
               </th>
-              <th className="px-8 py-6 text-left text-base font-medium text-gray-700 uppercase tracking-wider">
-                Acciones
-              </th>
+              {(canEdit || canDelete) && (
+                <th className="px-8 py-6 text-left text-base font-medium text-gray-700 uppercase tracking-wider">
+                  Acciones
+                </th>
+              )}
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -82,25 +86,31 @@ const ProfessorTable = ({ teachers, onEdit, onDelete, onViewAvailability }: Prof
                     }
                   </button>
                 </td>
-                <td className="px-8 py-6 whitespace-nowrap text-base font-medium">
-                  <div className="flex space-x-3">
-                    <button
-                      onClick={() => handleEdit(teacher)}
-                      className="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
-                    >
-                      <Edit className="w-4 h-4 mr-2" />
-                      Editar
-                    </button>
-                    <span className="text-gray-400 mx-2">|</span>
-                    <button
-                      onClick={() => handleDelete(teacher.teacherId)}
-                      className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      Eliminar
-                    </button>
-                  </div>
-                </td>
+                {(canEdit || canDelete) && (
+                  <td className="px-8 py-6 whitespace-nowrap text-base font-medium">
+                    <div className="flex space-x-3">
+                      {canEdit && (
+                        <button
+                          onClick={() => handleEdit(teacher)}
+                          className="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
+                        >
+                          <Edit className="w-4 h-4 mr-2" />
+                          Editar
+                        </button>
+                      )}
+                      {canEdit && canDelete && <span className="text-gray-400 mx-2">|</span>}
+                      {canDelete && (
+                        <button
+                          onClick={() => handleDelete(teacher.teacherId)}
+                          className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Eliminar
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

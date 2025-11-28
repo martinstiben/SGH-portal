@@ -6,9 +6,11 @@ import HeaderProfessor from "@/components/professors/HeaderProfessor";
 import ProfessorTable from "@/components/professors/ProfessorTable";
 import ProfessorModal from "@/components/professors/ProfessorModal";
 import AvailabilityModal from "@/components/professors/AvailabilityModal";
+import ViewAvailabilityModal from "@/components/professors/ViewAvailabilityModal";
 import SearchBar from "@/components/dashboard/SearchBar";
 import { getAllTeachers, createTeacher, updateTeacher, deleteTeacher, Teacher } from "@/api/services/teacherApi";
 import { getAllSubjects, Subject } from "@/api/services/subjectApi";
+import { getUserProfile } from "@/api/services/userApi";
 import Cookies from 'js-cookie';
 import { useRouter } from "next/navigation";
 
@@ -29,6 +31,8 @@ export default function ProfessorPage() {
   const [isAvailabilityModalOpen, setIsAvailabilityModalOpen] = useState(false);
   const [selectedTeacherForAvailability, setSelectedTeacherForAvailability] = useState<TeacherWithSubject | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState<string>("");
+  const [userProfile, setUserProfile] = useState<{ name: string; email: string; role?: string } | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -40,6 +44,17 @@ export default function ProfessorPage() {
       return;
     }
 
+    const fetchUserRole = async () => {
+      try {
+        const profile = await getUserProfile();
+        setUserRole(profile.role);
+        setUserProfile(profile);
+      } catch (error) {
+        console.error("Error fetching user role:", error);
+      }
+    };
+
+    fetchUserRole();
     fetchData();
   }, []);
 
@@ -115,6 +130,10 @@ export default function ProfessorPage() {
   };
 
   const handleViewAvailability = (teacher: TeacherWithSubject) => {
+    // Para maestros, solo permitir cambiar su propia disponibilidad
+    if (userRole === "MAESTRO" && teacher.teacherName !== userProfile?.name) {
+      return; // No hacer nada si no es su propio perfil
+    }
     setSelectedTeacherForAvailability(teacher);
     setIsAvailabilityModalOpen(true);
   };
@@ -178,7 +197,7 @@ export default function ProfessorPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
         >
-          <HeaderProfessor onAddProfessor={handleAddProfessor} />
+          <HeaderProfessor onAddProfessor={handleAddProfessor} showAddButton={userRole !== "MAESTRO"} />
         </motion.div>
 
         <motion.div
@@ -242,6 +261,8 @@ export default function ProfessorPage() {
             onEdit={handleEditTeacher}
             onDelete={handleDeleteTeacher}
             onViewAvailability={handleViewAvailability}
+            canEdit={userRole !== "MAESTRO"}
+            canDelete={userRole !== "MAESTRO"}
           />
         </motion.div>
       </motion.div>
@@ -254,11 +275,43 @@ export default function ProfessorPage() {
         teacher={editingTeacher}
       />
 
-      <AvailabilityModal
-        isOpen={isAvailabilityModalOpen}
-        onClose={handleCloseAvailabilityModal}
-        teacher={selectedTeacherForAvailability}
-      />
+      <AnimatePresence>
+        {isAvailabilityModalOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 backdrop-blur-md z-40"
+              onClick={handleCloseAvailabilityModal}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="fixed inset-0 flex items-center justify-center z-50 p-4"
+            >
+              {userRole === "MAESTRO" ? (
+                <AvailabilityModal
+                  isOpen={isAvailabilityModalOpen}
+                  onClose={handleCloseAvailabilityModal}
+                  teacherId={selectedTeacherForAvailability?.teacherId || 0}
+                  teacherName={selectedTeacherForAvailability?.teacherName || ''}
+                />
+              ) : (
+                <ViewAvailabilityModal
+                  isOpen={isAvailabilityModalOpen}
+                  onClose={handleCloseAvailabilityModal}
+                  teacherId={selectedTeacherForAvailability?.teacherId || 0}
+                  teacherName={selectedTeacherForAvailability?.teacherName || ''}
+                />
+              )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Delete Confirmation Modal */}
       <AnimatePresence>

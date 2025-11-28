@@ -13,7 +13,7 @@ import ScheduleEditModal from "@/components/schedule/ScheduleEditModal";
 import ScheduleViewSection from "@/components/schedule/ScheduleViewSection";
 import ScheduleTable from "@/components/schedule/ScheduleTable";
 import GenerateScheduleModal from "@/components/schedule/GenerateScheduleModal";
-import { getScheduleHistory, generateSchedule, ScheduleHistory, Schedule, createSchedule, getSchedulesByCourse, getAllSchedules, updateSchedule, deleteSchedule } from "@/api/services/scheduleApi";
+import { getScheduleHistory, generateSchedule, autoGenerateSchedule, regenerateSchedule, ScheduleHistory, Schedule, createSchedule, getSchedulesByCourse, getAllSchedules, updateSchedule, deleteSchedule } from "@/api/services/scheduleApi";
 import { getAllCourses, Course } from "@/api/services/courseApi";
 import { getAllSubjects, Subject } from "@/api/services/subjectApi";
 import { getAllTeachers, Teacher, getTeacherAvailability } from "@/api/services/teacherApi";
@@ -66,6 +66,7 @@ export default function SchedulePage() {
   const [filteredHistory, setFilteredHistory] = useState<ScheduleHistory[]>([]);
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [generationType, setGenerationType] = useState<'custom' | 'auto' | 'regenerate'>('auto');
 
   // Estados para formulario manual
   const [courses, setCourses] = useState<Course[]>([]);
@@ -167,7 +168,8 @@ export default function SchedulePage() {
     }
   };
 
-  const handleGenerateSchedule = () => {
+  const handleGenerateSchedule = (type: 'custom' | 'auto' | 'regenerate' = 'auto') => {
+    setGenerationType(type);
     setIsGenerateModalOpen(true);
   };
 
@@ -180,12 +182,27 @@ export default function SchedulePage() {
   }) => {
     setLoading(true);
     try {
-      await generateSchedule(request);
+      let result: ScheduleHistory;
+      if (generationType === 'auto') {
+        result = await autoGenerateSchedule();
+      } else if (generationType === 'regenerate') {
+        result = await regenerateSchedule();
+      } else {
+        result = await generateSchedule(request);
+      }
+
+      // No mostrar mensaje de éxito para evitar notificaciones
+      // if (result.coursesWithoutAvailability && result.coursesWithoutAvailability.length > 0) {
+      //   setSuccessMessage(`${result.message}. ${result.coursesWithoutAvailability.length} cursos sin disponibilidad.`);
+      // } else {
+      //   setSuccessMessage(result.message);
+      // }
+
       await loadHistory(); // Refresh history
       setIsGenerateModalOpen(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error generating schedule:", error);
-      setErrorMessage("Error al generar horario");
+      setErrorMessage(error.message || "Error al generar horario");
     } finally {
       setLoading(false);
     }
@@ -505,6 +522,7 @@ export default function SchedulePage() {
         onClose={handleCloseGenerateModal}
         onConfirm={handleConfirmGenerate}
         loading={loading}
+        generationType={generationType}
       />
 
       <ScheduleConfirmModal
@@ -584,6 +602,52 @@ export default function SchedulePage() {
           )}
         </motion.div>
 
+        {/* Generación Automática de Horarios */}
+        <div className="my-6">
+          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <h2 className="text-xl font-bold mb-6 text-gray-900 flex items-center">
+              <span className="mr-2">🤖</span>
+              Generación Automática de Horarios
+            </h2>
+            <p className="text-gray-600 mb-6">
+              El sistema genera horarios automáticamente asignando cursos a profesores según su disponibilidad,
+              evitando conflictos de horario y validando que cada profesor esté asociado a una sola materia.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <button
+                onClick={() => handleGenerateSchedule('auto')}
+                className="flex flex-col items-center p-6 bg-blue-50 rounded-xl hover:bg-blue-100 transition-all duration-300 border border-blue-200 hover:border-blue-300 hover:shadow-lg hover:-translate-y-1"
+              >
+                <div className="p-3 bg-blue-500 rounded-full mb-3">
+                  <span className="text-white text-xl">⚡</span>
+                </div>
+                <span className="text-sm font-semibold text-gray-900 mb-1">Generación Rápida</span>
+                <span className="text-xs text-gray-600 text-center">Genera horarios para la semana actual (Lunes-Viernes)</span>
+              </button>
+              <button
+                onClick={() => handleGenerateSchedule('custom')}
+                className="flex flex-col items-center p-6 bg-green-50 rounded-xl hover:bg-green-100 transition-all duration-300 border border-green-200 hover:border-green-300 hover:shadow-lg hover:-translate-y-1"
+              >
+                <div className="p-3 bg-green-500 rounded-full mb-3">
+                  <span className="text-white text-xl">🎯</span>
+                </div>
+                <span className="text-sm font-semibold text-gray-900 mb-1">Generación Personalizada</span>
+                <span className="text-xs text-gray-600 text-center">Configura fechas y parámetros específicos</span>
+              </button>
+              <button
+                onClick={() => handleGenerateSchedule('regenerate')}
+                className="flex flex-col items-center p-6 bg-orange-50 rounded-xl hover:bg-orange-100 transition-all duration-300 border border-orange-200 hover:border-orange-300 hover:shadow-lg hover:-translate-y-1"
+              >
+                <div className="p-3 bg-orange-500 rounded-full mb-3">
+                  <span className="text-white text-xl">🔄</span>
+                </div>
+                <span className="text-sm font-semibold text-gray-900 mb-1">Regenerar Todo</span>
+                <span className="text-xs text-gray-600 text-center">Borra todos los horarios y genera nuevos</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Reportes */}
         <div className="my-6">
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
@@ -622,7 +686,7 @@ export default function SchedulePage() {
               </div>
             </div>
           </div>
- 
+
           {/* Asignar Horario Manual */}
           <div className="my-6">
             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
@@ -773,6 +837,73 @@ export default function SchedulePage() {
               if (courseId) loadCourseSchedules(courseId);
             }}
           />
+
+          {/* Historial de Generaciones */}
+          <div className="my-6">
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <h2 className="text-xl font-bold mb-6 text-gray-900 flex items-center">
+                <span className="mr-2">📋</span>
+                Historial de Generaciones Automáticas
+              </h2>
+              {filteredHistory.length > 0 ? (
+                <div className="space-y-4">
+                  {filteredHistory.slice(0, 5).map((item) => (
+                    <div key={item.id} className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
+                            item.status === 'SUCCESS' ? 'bg-green-100 text-green-800' :
+                            item.status === 'FAILED' ? 'bg-red-100 text-red-800' :
+                            'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {item.status}
+                          </span>
+                          <span className="ml-2 text-sm text-gray-600">
+                            {new Date(item.executedAt).toLocaleString('es-ES')}
+                          </span>
+                        </div>
+                        <span className="text-sm text-gray-500">Por: {item.executedBy}</span>
+                      </div>
+                      <p className="text-sm text-gray-700 mb-2">{item.message}</p>
+                      {item.totalGenerated > 0 && (
+                        <p className="text-sm text-blue-600">
+                          ✅ {item.totalGenerated} horarios generados
+                        </p>
+                      )}
+                      {item.coursesWithoutAvailability && item.coursesWithoutAvailability.length > 0 && (
+                        <div className="mt-2">
+                          <p className="text-sm text-orange-600">
+                            ⚠️ {item.coursesWithoutAvailability.length} cursos sin disponibilidad:
+                          </p>
+                          <div className="mt-1 max-h-20 overflow-y-auto">
+                            {item.coursesWithoutAvailability.slice(0, 3).map((course, index) => (
+                              <p key={index} className="text-xs text-gray-600 ml-4">
+                                • {course.courseName}: {course.details}
+                              </p>
+                            ))}
+                            {item.coursesWithoutAvailability.length > 3 && (
+                              <p className="text-xs text-gray-500 ml-4">
+                                ... y {item.coursesWithoutAvailability.length - 3} más
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {filteredHistory.length > 5 && (
+                    <p className="text-center text-sm text-gray-500 mt-4">
+                      Mostrando los 5 más recientes. Total: {filteredHistory.length} generaciones.
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-center py-8">
+                  No hay historial de generaciones automáticas aún.
+                </p>
+              )}
+            </div>
+          </div>
 
           {/* Mostrar Horario del Curso */}
           {selectedCourse && (

@@ -115,6 +115,16 @@ export const deleteSchedule = async (id: number): Promise<void> => {
   }
 };
 
+export interface CourseWithoutAvailabilityDTO {
+  id: number;
+  courseName: string;
+  teacherId?: number;
+  teacherName?: string;
+  reason: string;
+  code: string;
+  details: string;
+}
+
 export interface ScheduleHistory {
   id: number;
   executedBy: string;
@@ -127,6 +137,8 @@ export interface ScheduleHistory {
   dryRun: boolean;
   force: boolean;
   params?: string;
+  coursesWithoutAvailability?: CourseWithoutAvailabilityDTO[];
+  totalCoursesWithoutAvailability?: number;
 }
 
 export const generateSchedule = async (request: {
@@ -152,6 +164,46 @@ export const generateSchedule = async (request: {
     return data;
   } catch (error: any) {
     console.error("Error al generar horario:", error.message);
+    throw error;
+  }
+};
+
+export const autoGenerateSchedule = async (): Promise<ScheduleHistory> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/schedules/auto-generate`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.message || `Error ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error("Error al generar horario automáticamente:", error.message);
+    throw error;
+  }
+};
+
+export const regenerateSchedule = async (): Promise<ScheduleHistory> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/schedules/regenerate`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.message || `Error ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error("Error al regenerar horario:", error.message);
     throw error;
   }
 };
