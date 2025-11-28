@@ -1,6 +1,6 @@
 # 🧠 SGH (Sistema de Gestión de Horarios)
 
-**SGH** es una solución integral diseñada para facilitar la **planificación, organización y control de los horarios escolares**.  
+**SGH** es una solución integral diseñada para facilitar la **organización y control de los horarios escolares**.  
 El sistema permite a los coordinadores gestionar horarios de clases, docentes y salones de forma eficiente, integrando módulos web, móvil y una API backend, junto con documentación y base de datos estructurada.
 
 ---
