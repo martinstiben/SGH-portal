@@ -63,6 +63,8 @@ const TableCourse = ({ courses, onEdit, onDelete, onViewStudents }: TableCourseP
     }
   };
 
+
+
   const sortedCourses = [...courses].sort((a, b) => {
     const matchA = a.courseName.match(/^([^0-9]+)(\d+)/);
     const matchB = b.courseName.match(/^([^0-9]+)(\d+)/);
@@ -137,6 +139,7 @@ const TableCourse = ({ courses, onEdit, onDelete, onViewStudents }: TableCourseP
                             Ver Estudiantes
                           </button>
                         )}
+
                         <button
                           onClick={() => handleEdit(course.courseId)}
                           className="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors"

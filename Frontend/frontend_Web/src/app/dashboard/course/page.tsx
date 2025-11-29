@@ -179,6 +179,8 @@ export default function CoursePage() {
     setSelectedCourse(null);
   };
 
+
+
   return (
     <>
       {/* Main content */}
