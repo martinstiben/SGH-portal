@@ -60,7 +60,7 @@ export default function Sidebar() {
     setIsLoggingOut(true);
     try {
       // Call backend logout endpoint
-      const response = await fetch("http://localhost:8082/auth/logout", {
+      const response = await fetch("http://72.61.71.9:8082/auth/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
