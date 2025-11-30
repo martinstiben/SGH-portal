@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import RegisterForm from "@/components/login/RegisterForm";
 import { register } from "@/api/services/userApi";
 
@@ -9,6 +9,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const [authError, setAuthError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   interface RegisterFormValues {
     name: string;
@@ -57,6 +58,15 @@ export default function RegisterPage() {
       }
     }
   };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div
