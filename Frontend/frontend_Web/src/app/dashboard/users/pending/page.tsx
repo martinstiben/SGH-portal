@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { CheckCircle, XCircle, Clock, User, Mail, Shield } from "lucide-react";
 import { getToken } from "@/api/utils/authUtils";
+import { USER_END_POINTS, API_BASE_URL } from "@/api/constants/Endpoint";
 
 interface PendingUser {
   userId: number;
@@ -26,7 +27,7 @@ export default function PendingUsersPage() {
     try {
       setLoading(true);
       const token = getToken();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8082'}/auth/pending-users`, {
+      const response = await fetch(`${USER_END_POINTS}/pending-users`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -50,7 +51,7 @@ export default function PendingUsersPage() {
     try {
       setProcessingUser(userId);
       const token = getToken();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8082'}/auth/approve-user/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/auth/approve-user/${userId}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -78,7 +79,7 @@ export default function PendingUsersPage() {
     try {
       setProcessingUser(userId);
       const token = getToken();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8082'}/auth/reject-user/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/auth/reject-user/${userId}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

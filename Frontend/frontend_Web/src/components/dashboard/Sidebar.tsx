@@ -60,7 +60,7 @@ export default function Sidebar() {
     setIsLoggingOut(true);
     try {
       // Call backend logout endpoint
-      const response = await fetch("http://72.61.71.9:8082/auth/logout", {
+      const response = await fetch("https://app.sgh-sistema-gestion-horarios.online/api/auth/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

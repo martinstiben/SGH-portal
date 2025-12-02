@@ -24,7 +24,7 @@ const calculateEndTime = (startTime: string): string => {
 };
 
 const exportSchedule = async (format: 'pdf' | 'excel' | 'image', type: 'course' | 'teacher' | 'all', id?: number) => {
-  let url = `http://localhost:8082/schedules/${format}`;
+  let url = `https://app.sgh-sistema-gestion-horarios.online/api/schedules/${format}`;
   if (type === 'course' && id) {
     url += `/course/${id}`;
   } else if (type === 'teacher' && id) {

@@ -22,12 +22,19 @@ interface EnvironmentConfig {
  * Configuración de entorno con valores por defecto
  */
 const config: EnvironmentConfig = {
-  apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://72.61.71.9:8082',
+  apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://app.sgh-sistema-gestion-horarios.online/api',
   isDevelopment: process.env.NODE_ENV === 'development',
   isProduction: process.env.NODE_ENV === 'production',
   logLevel: (process.env.NEXT_PUBLIC_LOG_LEVEL as any) || 'info',
   enableRemoteLogging: process.env.NEXT_PUBLIC_ENABLE_REMOTE_LOGGING === 'true',
 };
+
+console.log('Config environment:', {
+  NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  NODE_ENV: process.env.NODE_ENV,
+  apiBaseUrl: config.apiBaseUrl,
+  isDevelopment: config.isDevelopment
+});
 
 /**
  * Valida la configuración de entorno
