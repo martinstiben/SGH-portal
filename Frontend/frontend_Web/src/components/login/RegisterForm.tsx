@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Eye, EyeOff, User, Lock, Users, BookOpen, GraduationCap } from "lucide-react";
+import TermsModal from "@/components/TermsModal";
 import { getRoles } from "@/api/services/userApi";
 import { getAllSubjects, Subject } from "@/api/services/subjectApi";
 import { getAllCourses, Course } from "@/api/services/courseApi";
@@ -34,6 +35,7 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
   const [subjectId, setSubjectId] = useState<number | null>(null);
   const [courseId, setCourseId] = useState<number | null>(null);
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -381,13 +383,21 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
             />
             <label htmlFor="acceptTerms" className="text-sm text-gray-300">
               Acepto los{" "}
-              <a href="#" className="text-blue-400 hover:text-blue-300 underline">
+              <button
+                type="button"
+                onClick={() => setIsTermsModalOpen(true)}
+                className="text-blue-400 hover:text-blue-300 underline"
+              >
                 términos y condiciones
-              </a>{" "}
+              </button>{" "}
               y la{" "}
-              <a href="#" className="text-blue-400 hover:text-blue-300 underline">
+              <button
+                type="button"
+                onClick={() => setIsTermsModalOpen(true)}
+                className="text-blue-400 hover:text-blue-300 underline"
+              >
                 política de privacidad
-              </a>
+              </button>
             </label>
           </div>
           {termsError && (
@@ -433,6 +443,12 @@ export default function RegisterForm({ onBack, onSubmit, authError, successMessa
       <div className="absolute bottom-3 sm:bottom-4 text-gray-400 text-xs sm:text-sm text-center w-full">
         Derechos reservados ©Bytestock
       </div>
+
+      {/* Terms Modal */}
+      <TermsModal
+        isOpen={isTermsModalOpen}
+        onClose={() => setIsTermsModalOpen(false)}
+      />
     </div>
   );
 }

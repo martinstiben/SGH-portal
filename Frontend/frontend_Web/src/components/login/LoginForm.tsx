@@ -4,7 +4,7 @@ import { Eye, EyeOff, User, Lock } from "lucide-react";
 
 interface LoginFormProps {
   onBack?: () => void;
-  onSubmit?: (data: { email: string; password: string; acceptTerms: boolean }) => void;
+  onSubmit?: (data: { email: string; password: string; acceptTerms?: boolean }) => void;
   authError?: string;
   successMessage?: string;
 }
@@ -54,7 +54,7 @@ export default function LoginForm({ onBack, onSubmit, authError, successMessage 
 
     try {
       if (onSubmit) {
-        await onSubmit({ email, password, acceptTerms: true });
+        await onSubmit({ email, password });
       }
     } finally {
       setIsLoading(false);
@@ -178,5 +178,5 @@ export default function LoginForm({ onBack, onSubmit, authError, successMessage 
           </p>
         </div>
       </div>
-    );
-  }
+  );
+}
