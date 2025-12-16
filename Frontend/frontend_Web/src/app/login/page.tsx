@@ -17,7 +17,7 @@ export default function LoginPage() {
   interface LoginFormValues {
     email: string;
     password: string;
-    acceptTerms: boolean;
+    acceptTerms?: boolean;
   }
 
   interface CodeFormValues {
