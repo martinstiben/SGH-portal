@@ -20,7 +20,16 @@ export const initiateLogin = async (email: string, password: string) => {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
-      throw new Error(errorData?.message || `Error ${response.status}`);
+      const errorMessage = errorData?.message || `Error ${response.status}`;
+      
+      // Manejo específico para error 401
+      if (response.status === 401) {
+        log.error("Error en login - Credenciales inválidas", errorData, { email });
+        throw new Error("Credenciales inválidas");
+      }
+      
+      log.error("Error en login", errorData, { email });
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();

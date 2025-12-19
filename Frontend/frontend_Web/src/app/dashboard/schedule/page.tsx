@@ -15,6 +15,7 @@ import { getAllSubjects, Subject } from "@/api/services/subjectApi";
 import { getAllTeachers, Teacher, getTeacherAvailability } from "@/api/services/teacherApi";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import Cookies from 'js-cookie';
+import { config } from "@/config/env";
 
 const calculateEndTime = (startTime: string): string => {
   const [hours, minutes] = startTime.split(':').map(Number);
@@ -24,7 +25,7 @@ const calculateEndTime = (startTime: string): string => {
 };
 
 const exportSchedule = async (format: 'pdf' | 'excel' | 'image', type: 'course' | 'teacher' | 'all', id?: number) => {
-  let url = `https://app.sgh-sistema-gestion-horarios.online/api/schedules/${format}`;
+  let url = `${config.apiBaseUrl}/api/schedules/${format}`;
   if (type === 'course' && id) {
     url += `/course/${id}`;
   } else if (type === 'teacher' && id) {

@@ -1,27 +1,35 @@
-# Usar una imagen base de Node.js
-FROM node:18-alpine
+# ======================
+# Etapa 1: Build
+# ======================
+FROM node:20-alpine AS builder
 
-# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copiar package.json y package-lock.json
-COPY package*.json ./
-
-# Instalar dependencias
+# Copiar dependencias
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Copiar el resto del código
+# Copiar el resto del proyecto
 COPY . .
 
-# Desactivar ESLint durante el build para evitar errores
-ENV ESLINT_NO_DEV_ERRORS=true
-ENV NEXT_TELEMETRY_DISABLED=1
+# Build de Next.js
+RUN npm run build
 
-# Construir la aplicación sin linting
-RUN npm run build -- --no-lint
+# ======================
+# Etapa 2: Producción
+# ======================
+FROM node:20-alpine AS runner
 
-# Exponer el puerto
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+# Copiar solo lo necesario
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+
 EXPOSE 3000
 
-# Comando para ejecutar la aplicación
 CMD ["npm", "start"]

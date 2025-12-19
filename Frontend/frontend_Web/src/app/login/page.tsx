@@ -17,7 +17,7 @@ export default function LoginPage() {
   interface LoginFormValues {
     email: string;
     password: string;
-    acceptTerms: boolean;
+    acceptTerms?: boolean;
   }
 
   interface CodeFormValues {
@@ -43,7 +43,7 @@ export default function LoginPage() {
         setAuthError("Error al iniciar sesión.");
       }
     } catch (err: any) {
-      if (err.response?.status === 401) {
+      if (err.message === "Credenciales inválidas") {
         setAuthError("Email o contraseña incorrectos.");
       } else if (err.response?.data?.message) {
         setAuthError(err.response.data.message);
