@@ -1,6 +1,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { isAuthenticated, removeToken, getToken } from '@/api/utils/authUtils';
+import { config } from '@/config/env';
 
 /**
  * Hook personalizado para manejar autenticación
@@ -31,7 +32,7 @@ export const useAuth = () => {
   const logout = async () => {
     try {
       // Llamar al endpoint de logout del backend
-      const response = await fetch('https://app.sgh-sistema-gestion-horarios.online/api/auth/logout', {
+      const response = await fetch(`${config.apiBaseUrl}/auth/logout`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${getToken()}`,

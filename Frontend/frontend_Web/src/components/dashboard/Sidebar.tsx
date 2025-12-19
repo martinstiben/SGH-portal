@@ -18,6 +18,7 @@ import Cookies from 'js-cookie';
 import { useAuth } from "@/hooks/useAuth";
 import LogoutModal from "./LogoutModal";
 import { getUserProfile } from "@/api/services/userApi";
+import { config } from "@/config/env";
 
 /**
  * Componente de navegación lateral (Sidebar) del dashboard
@@ -60,7 +61,7 @@ export default function Sidebar() {
     setIsLoggingOut(true);
     try {
       // Call backend logout endpoint
-      const response = await fetch("https://app.sgh-sistema-gestion-horarios.online/api/auth/logout", {
+      const response = await fetch(`${config.apiBaseUrl}/auth/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

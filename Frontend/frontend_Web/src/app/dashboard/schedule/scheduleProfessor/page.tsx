@@ -9,9 +9,10 @@ import { getAllTeachers, Teacher } from "@/api/services/teacherApi";
 import { getAllCourses, Course } from "@/api/services/courseApi";
 import Cookies from 'js-cookie';
 import { useRouter } from "next/navigation";
+import { config } from "@/config/env";
 
 const exportSchedule = async (format: 'pdf' | 'excel' | 'image', type: 'course' | 'teacher' | 'all', id?: number) => {
-  let url = `https://app.sgh-sistema-gestion-horarios.online/api/schedules/${format}`;
+  let url = `${config.apiBaseUrl}/api/schedules/${format}`;
   if (type === 'course' && id) {
     url += `/course/${id}`;
   } else if (type === 'teacher' && id) {
@@ -24,7 +25,12 @@ const exportSchedule = async (format: 'pdf' | 'excel' | 'image', type: 'course' 
   }
 
   try {
-    const response = await fetch(url);
+    const token = Cookies.get('token');
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     if (!response.ok) throw new Error('Error en la exportación');
 
     const blob = await response.blob();

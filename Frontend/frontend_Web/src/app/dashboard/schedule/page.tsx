@@ -38,7 +38,12 @@ const exportSchedule = async (format: 'pdf' | 'excel' | 'image', type: 'course' 
   }
 
   try {
-    const response = await fetch(url);
+    const token = Cookies.get('token');
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     if (!response.ok) throw new Error('Error en la exportación');
 
     const blob = await response.blob();
