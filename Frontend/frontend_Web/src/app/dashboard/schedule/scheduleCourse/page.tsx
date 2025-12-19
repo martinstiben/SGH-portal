@@ -13,26 +13,32 @@ import Cookies from 'js-cookie';
 import { useRouter } from "next/navigation";
 import { config } from "@/config/env";
 
-const exportSchedule = async (format: 'pdf' | 'excel' | 'image', type: 'course' | 'teacher' | 'all', id?: number) => {
-  let url = `${config.apiBaseUrl}/api/schedules/${format}`;
+const exportSchedule = async (format: 'pdf' | 'excel' | 'image', type: 'course' | 'teacher' | 'all' | 'all-teachers', id?: number) => {
+  let url = `${config.apiBaseUrl}/schedules`;
   if (type === 'course' && id) {
-    url += `/course/${id}`;
+    url += `/${format}/course/${id}`;
   } else if (type === 'teacher' && id) {
-    url += `/teacher/${id}`;
+    url += `/${format}/teacher/${id}`;
   } else if (type === 'all') {
-    url += '/all';
-    if (format === 'pdf') url += '-teachers';
-    else if (format === 'excel') url += '-teachers';
-    else if (format === 'image') url += '-teachers';
+    if (format === 'pdf') {
+      url += '/pdf/all';
+    } else if (format === 'excel') {
+      url += '/excel/all';
+    } else if (format === 'image') {
+      url += '/image/all';
+    }
+  } else if (type === 'all-teachers') {
+    if (format === 'pdf') {
+      url += '/pdf/all-teachers';
+    } else if (format === 'excel') {
+      url += '/excel/all-teachers';
+    } else if (format === 'image') {
+      url += '/image/all-teachers';
+    }
   }
 
   try {
-    const token = Cookies.get('token');
-    const response = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
+    const response = await fetch(url);
     if (!response.ok) throw new Error('Error en la exportación');
 
     const blob = await response.blob();
