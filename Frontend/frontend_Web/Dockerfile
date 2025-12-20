@@ -12,6 +12,8 @@ RUN npm install
 # Copiar el resto del proyecto
 COPY . .
 
+COPY .env.production .env.production
+
 # Build de Next.js
 RUN npm run build
 
